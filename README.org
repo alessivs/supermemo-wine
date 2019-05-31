@@ -66,7 +66,7 @@ Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
 It is safe to ignore this section if all you need is run the installers.
 
 *** Template
-A template for a winetricks verb abstracts commonalities between install actions performed by SuperMemo installers. It makes use of official, published URLs. Installers not published are to be downloaded separately (for example, from the [[https://super-memo.com/index.html][Super Memory Store]] attached to your order).
+A template for a winetricks verb abstracts commonalities between install actions performed by SuperMemo installers. It makes use of official, published URLs. Installers not published are to be downloaded separately (for example, attached to your order from the [[https://super-memo.com/index.html][Super Memory Store]]).
 
 #+BEGIN_SRC emacs-lisp :results silent
   (require 'cl-lib)
