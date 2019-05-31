@@ -1,20 +1,22 @@
 * Wine installers for SuperMemo using winetricks
 
-...allowing simple installation of SuperMemo on Linux systems using [[https://www.winehq.org/][Wine]] and [[https://wiki.winehq.org/Winetricks][winetricks]].
+...offering simple installation of SuperMemo on Linux systems using [[https://www.winehq.org/][Wine]] and [[https://wiki.winehq.org/Winetricks][winetricks]].
+
+[[https://orgmode.org/worg/org-contrib/babel/][This is a literate source file]].
 
 ** 👉 Be forewarned
-The Wine SuperMemo experience is not the same as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). To copy and paste HTML content into SuperMemo, prefer web pages rendered by Firefox, then run the any HTML filters within SuperMemo (@@html:<kbd>@@F6@@html:</kbd>@@) as needed.
+The Wine SuperMemo experience is not as good as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). To copy and paste HTML content into SuperMemo, prefer web pages rendered by Firefox, then run the any HTML filters within SuperMemo (@@html:<kbd>@@F6@@html:</kbd>@@) as needed.
 
 /A more extensive compilation of caveats is planned./
 
-Even with these apparent setbacks, I rely on this setup daily–I do not run SuperMemo on Windows for incremental learning.
+Even with these apparent setbacks, I deem the behavior of SuperMemo on Wine (on Linux specifically) appropriate for daily use.
 
 /Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
 
 ** Installing
-First, make sure to install *wine* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
+First, make sure to install *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
 
-: $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb/
+: $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb
 
 For instance:
 
@@ -24,13 +26,13 @@ For instance:
 
 Avoid moving focus away from the install wizard window during installation.
 
-By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=. If you don't want to follow this scheme set the =WINEPREFIX= environment variable beforehand. Run =winetricks -h= for more information.
+By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=. If you don't want to follow this scheme set the =WINEPREFIX= environment variable beforehand (and remove the winetricks =prefix= directive). Run =winetricks -h= for more information.
 
 On successful installation, an executable shortcut to start the application will be created in the Desktop folder, if already configured by your distro.
 
 ** During post-install
 *** Do not use the Wine prefix for collection data
- Since wineprefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
+Since wineprefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
 
 *** How to configure the Wine prefix
 The canonical command to configure the wine prefix the software has been installed into is: 
