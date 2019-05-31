@@ -1,0 +1,152 @@
+* Wine installers for SuperMemo using winetricks
+
+...allowing simple installation of SuperMemo on Linux systems using [[https://www.winehq.org/][Wine]] and [[https://wiki.winehq.org/Winetricks][winetricks]].
+
+** 👉 Be forewarned
+The Wine SuperMemo experience is not the same as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). To copy and paste HTML content into SuperMemo, prefer web pages rendered by Firefox, then run the any HTML filters within SuperMemo (@@html:<kbd>@@F6@@html:</kbd>@@) as needed.
+
+/A more extensive compilation of caveats is planned./
+
+Even with these apparent setbacks, I rely on this setup daily–I do not run SuperMemo on Windows for incremental learning.
+
+/Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
+
+** Installing
+First, make sure to install *wine* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
+
+: $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb/
+
+For instance:
+
+ : $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15 supermemo15.verb
+
+*Quirk:* =env WINEARCH=win32= is needed at the front to avoid creation of a 64-bit prefix when an existing, default Wine prefix is already 64-bit. Installation of the required Internet Explorer 8 dependency only succeeds on a 32-bit prefix.
+
+Avoid moving focus away from the install wizard window during installation.
+
+By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=. If you don't want to follow this scheme set the =WINEPREFIX= environment variable beforehand. Run =winetricks -h= for more information.
+
+On successful installation, an executable shortcut to start the application will be created in the Desktop folder, if already configured by your distro.
+
+** During post-install
+*** Do not use the Wine prefix for collection data
+ Since wineprefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
+
+*** How to configure the Wine prefix
+The canonical command to configure the wine prefix the software has been installed into is: 
+
+ : $ env WINEPREFIX=/path/to/wine/prefix winecfg
+
+It is useful to disable handling of file associations with crippled Wine applications, so disable: 
+
+/Wine configuration → Desktop integration → Mime types → [ ] Manage file associations/.
+
+** Uninstalling
+From the WineHQ Wiki ([[https://wiki.winehq.org/Winetricks#How_to_remove_things_installed_by_Winetricks][source]]):
+
+#+BEGIN_QUOTE
+Winetricks does not provide a way to uninstall individual apps or DLLs inside a Wine prefix. This is for several reasons, but mainly because the preferred way to uninstall anything in Wine is to simply install into a fresh Wine prefix.
+#+END_QUOTE
+
+Also, *be sure to back up any data saved in C:\\SuperMemo\\ you might need*.
+
+To uninstall SuperMemo, simply delete the corresponding Wine prefix via =winetricks annihilate=. For instance, to uninstall SuperMemo 15 from the winetricks-managed prefix named /supermemo15/, run:
+
+: $ winetricks prefix=supermemo15 annihilate
+
+From the winetricks command-line help:
+
+#+BEGIN_QUOTE
+annihilate
+
+Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
+#+END_QUOTE
+
+** Sources
+It is safe to ignore this section if all you need is run the installers.
+
+*** Template
+A template for a winetricks verb abstracts commonalities between install actions performed by SuperMemo installers. It makes use of official, published URLs. Installers not published are to be downloaded separately (for example, from the [[https://super-memo.com/index.html][Super Memory Store]] attached to your order).
+
+#+BEGIN_SRC emacs-lisp :results silent
+  (require 'cl-lib)
+  (cl-defun print-installer (&key app-name app-title media-type installer-file-name installer-url installer-sha256sum)
+    (setq dlcmd (string-join (if (string= media-type "manual_download")
+                                 (list "w_download_manual" installer-url installer-file-name installer-sha256sum)
+                               (list "w_download" installer-url installer-sha256sum)) " "))
+    (print (format "# -*- Mode: shell-script; -*-
+  w_metadata %s apps \\
+      title=\"%s\" \\
+      publisher=\"SuperMemo World\" \\
+      media=\"%s\" \\
+      file1=\"%s\" \\
+
+  load_%s()
+  {
+      w_package_unsupported_win64
+      w_call ie8
+      %s
+      w_try_cd \"$W_CACHE/$W_PACKAGE\"
+      w_ahk_do \"
+          run, %s
+          WinWait, SuperMemo Install Wizard, Welcome to the SuperMemo
+          Sleep 100
+          ControlClick, Button2
+          WinWait, SuperMemo Install Wizard, Choose Install Folder
+          Sleep 100
+          ControlClick, Button2
+          WinWait, SuperMemo Install Wizard, Choose Start Menu
+          Sleep 100
+          ControlClick, Button2
+          WinWait, SuperMemo Install Wizard, Choose Additional
+          Sleep 100
+          ControlClick, Button2
+          WinWait, SuperMemo Install Wizard, Completing the
+          ControlClick, Button4
+          Sleep 100
+          ControlClick, Button2
+          Sleep 100
+          WinWaitClose, SuperMemo Install Wizard
+      \"
+  }
+  " app-name app-title media-type installer-file-name app-name dlcmd installer-file-name)))
+#+END_SRC
+
+*** SuperMemo 15 installer
+#+BEGIN_SRC emacs-lisp :results value file :file supermemo15.verb
+  (print-installer :app-name "supermemo15"
+                   :app-title "SuperMemo 15"
+                   :media-type "download"
+                   :installer-file-name "sm15inst.exe"
+                   :installer-url "https://supermemo.org/install/sm15inst.exe"
+                   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4")
+#+END_SRC
+
+#+RESULTS:
+[[file:supermemo15.verb]]
+
+*** SuperMemo 16 installer
+#+BEGIN_SRC emacs-lisp :results value file :file supermemo16.verb
+  (print-installer :app-name "supermemo16"
+                   :app-title "SuperMemo 16"
+                   :media-type "download"
+                   :installer-file-name "sm16inst.exe"
+                   :installer-url "https://supermemo.org/install/sm16inst.exe"
+                   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4")
+#+END_SRC
+
+#+RESULTS:
+[[file:supermemo16.verb]]
+
+*** SuperMemo 17 installer
+#+BEGIN_SRC emacs-lisp :results value file :file supermemo17.verb
+  (print-installer :app-name "supermemo17"
+                   :app-title "SuperMemo 17"
+                   :media-type "manual_download"
+                   :installer-file-name "sm17inst.exe"
+                   :installer-url "https://super-memo.com/index.html"
+                   :installer-sha256sum "09269ed14c042099e492283e3d3376931c99e31b94d9e3d8b1ce0334a0386920")
+#+END_SRC
+
+#+RESULTS:
+[[file:supermemo17.verb]]
