@@ -4,6 +4,7 @@ w_metadata supermemo15 apps \
     publisher="SuperMemo World" \
     media="download" \
     file1="sm15inst.exe" \
+    installed_exe1="c:/SuperMemo/sm15.exe" \
 
 load_supermemo15()
 {

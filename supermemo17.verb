@@ -4,6 +4,7 @@ w_metadata supermemo17 apps \
     publisher="SuperMemo World" \
     media="manual_download" \
     file1="sm17inst.exe" \
+    installed_exe1="c:/SuperMemo/sm17.exe" \
 
 load_supermemo17()
 {
