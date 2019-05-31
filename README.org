@@ -1,8 +1,10 @@
 * Wine installers for SuperMemo using winetricks
 
+[[https://orgmode.org/worg/org-contrib/babel/][https://img.shields.io/badge/org--babel-literate-informational.svg]]
+
 ...offering simple installation of SuperMemo on Linux systems using [[https://www.winehq.org/][Wine]] and [[https://wiki.winehq.org/Winetricks][winetricks]].
 
-[[https://orgmode.org/worg/org-contrib/babel/][This is a literate source file]].
+[[https://www.reddit.com/r/super_memo/comments/bv28ol/supermemowine_simple_installation_of_supermemo_on/][Reddit thread]].
 
 ** 👉 Be forewarned
 The Wine SuperMemo experience is not as good as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). To copy and paste HTML content into SuperMemo, prefer web pages rendered by Firefox, then run the any HTML filters within SuperMemo (@@html:<kbd>@@F6@@html:</kbd>@@) as needed.
@@ -14,7 +16,7 @@ Even with these apparent setbacks, I deem the behavior of SuperMemo on Wine (on 
 /Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
 
 ** Installing
-First, make sure to install *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
+First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
 
 : $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb
 
@@ -26,7 +28,9 @@ For instance:
 
 Avoid moving focus away from the install wizard window during installation.
 
-By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=. If you don't want to follow this scheme set the =WINEPREFIX= environment variable beforehand (and remove the winetricks =prefix= directive). Run =winetricks -h= for more information.
+By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=. 
+
+(If you don't want to follow this scheme set the =WINEPREFIX= environment variable beforehand (and remove the winetricks =prefix= directive). Run =winetricks -h= for more information)
 
 On successful installation, an executable shortcut to start the application will be created in the Desktop folder, if already configured by your distro.
 
@@ -63,6 +67,11 @@ annihilate
 
 Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
 #+END_QUOTE
+
+** Why add the winetricks dependency?
+- winetricks may have produced the only reproducible 32-bit Internet Explorer 8 installation recipe that is kept up to date; it is rather complex and maintaining a separate one requires resources better spent elsewhere.
+- winetricks has convenient shell functions for basic dependency management, checking download integrity, detecting existing installations, user interface automation via AutoHotKey, among others.
+- advanced users will know which bits of winetricks to use or discard.
 
 ** Sources
 It is safe to ignore this section if all you need is run the installers.
