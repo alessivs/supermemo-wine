@@ -15,6 +15,13 @@ Even with these apparent setbacks, I deem the behavior of SuperMemo on Wine (on 
 
 /Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
 
+** Provided installers 
+| Product      | Year released | Last updated         | Status     | Installer        |
+|--------------+---------------+----------------------+------------+------------------|
+| SuperMemo 15 |          2011 | Jul 1, 2018 (15.5)   | Freeware   | [[./supermemo15.verb][supermemo15.verb]] |
+| SuperMemo 16 |          2013 | Apr 5, 2015 (16.1)   | Trial      | [[./supermemo16.verb][supermemo16.verb]] |
+| SuperMemo 17 |          2015 | Jun 11, 2018 (17.40) | Commercial | [[./supermemo17.verb][supermemo17.verb]] |
+
 ** Installing
 First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
 
