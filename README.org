@@ -27,23 +27,30 @@ First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[http
 
 : $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb
 
-For instance:
-
- : $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15 supermemo15.verb
+By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=. 
 
 *Quirk:* =env WINEARCH=win32= is needed at the front to avoid creation of a 64-bit prefix when an existing, default Wine prefix is already 64-bit. Installation of the required Internet Explorer 8 dependency only succeeds on a 32-bit prefix.
 
-Avoid moving focus away from the install wizard window during installation.
+*** Example
+To install SuperMemo 15 run:
 
-By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=. 
+  : $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15 supermemo15.verb
 
-(If you don't want to follow this scheme set the =WINEPREFIX= environment variable beforehand (and remove the winetricks =prefix= directive). Run =winetricks -h= for more information)
+ The root of the wine prefix will then be =~/.local/share/wineprefixes/supermemo15/=.
 
-On successful installation, an executable shortcut to start the application will be created in the Desktop folder, if already configured by your distro.
+*** Installation wizards
+The installer takes care of running the installation of Internet Explorer 8 for SuperMemos that need it. This installation wizard needs to be attended. Any prompts to /install updates/, or /restart the system/ can be safely ignored or followed (they have no consequence). Actually restarting the system is not needed.
+
+Installation steps in SuperMemos using installation wizards are handled automatically. Avoid moving focus away from the install wizard window during installation.
+
+*** Running SuperMemo
+On successful installation, an executable =.desktop= shortcut to start the application will be created in the Desktop folder, if already configured by your distro.
 
 ** During post-install
+There are many convenient configuration steps to improve the behavior of SuperMemo. They are out of scope for these installers–they're just concerned with the installation. However, consider the following:
+
 *** Do not use the Wine prefix for collection data
-Since wineprefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
+Since wine prefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
 
 *** How to configure the Wine prefix
 The canonical command to configure the wine prefix the software has been installed into is: 
@@ -61,11 +68,11 @@ From the WineHQ Wiki ([[https://wiki.winehq.org/Winetricks#How_to_remove_things_
 Winetricks does not provide a way to uninstall individual apps or DLLs inside a Wine prefix. This is for several reasons, but mainly because the preferred way to uninstall anything in Wine is to simply install into a fresh Wine prefix.
 #+END_QUOTE
 
-Also, *be sure to back up any data saved in C:\\SuperMemo\\ you might need*.
+*Be sure to back up any data saved in C:\\SuperMemo\\ you might need*.
 
 To uninstall SuperMemo, simply delete the corresponding Wine prefix via =winetricks annihilate=. For instance, to uninstall SuperMemo 15 from the winetricks-managed prefix named /supermemo15/, run:
 
-: $ winetricks prefix=supermemo15 annihilate
+: $ env WINEARCH=win32 sh winetricks prefix=supermemo15 annihilate
 
 From the winetricks command-line help:
 
@@ -81,7 +88,7 @@ Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
 - advanced users will know which bits of winetricks to use or discard.
 
 ** Sources
-It is safe to ignore this section if all you need is run the installers.
+It is safe to skip this section if all you need is run the installers.
 
 *** Template
 A template for a winetricks verb abstracts commonalities between install actions performed by SuperMemo installers. It makes use of official, published URLs. Installers not published are to be downloaded separately (for example, attached to your order from the [[https://super-memo.com/index.html][Super Memory Store]]).
