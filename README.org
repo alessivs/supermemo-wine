@@ -16,11 +16,12 @@ Even with these apparent setbacks, I deem the behavior of SuperMemo on Wine (on 
 /Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
 
 ** Provided installers 
-| Product      | Year released | Last updated         | Status     | Installer        |
+| Product      | Year released | Last updated         | Type       | Installer        |
 |--------------+---------------+----------------------+------------+------------------|
 | SuperMemo 15 |          2011 | Jul 1, 2018 (15.5)   | Freeware   | [[./supermemo15.verb][supermemo15.verb]] |
 | SuperMemo 16 |          2013 | Apr 5, 2015 (16.1)   | Trial      | [[./supermemo16.verb][supermemo16.verb]] |
 | SuperMemo 17 |          2015 | Jun 11, 2018 (17.40) | Commercial | [[./supermemo17.verb][supermemo17.verb]] |
+| SuperMemo 18 |          2019 | May 28, 2019 (18.02) | Commercial | [[./supermemo18.verb][supermemo18.verb]] |
 
 ** Installing
 First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
@@ -182,3 +183,18 @@ A template for a winetricks verb abstracts commonalities between install actions
 
 #+RESULTS:
 [[file:supermemo17.verb]]
+
+*** SuperMemo 18 installer
+#+BEGIN_SRC emacs-lisp :results value file :file supermemo18.verb
+  (make-wizard-installer
+   :app-name "supermemo18"
+   :app-title "SuperMemo 18"
+   :media-type "manual_download"
+   :installer-file-name "sm18inst.exe"
+   :installer-url "https://super-memo.com/index.html"
+   :installer-sha256sum "87ebd4da706c825575655aeddc9a68291d52712880fe1c39e1e1d0a41853b35f"
+   :installed-exe "sm18.exe")
+#+END_SRC
+
+#+RESULTS:
+[[file:supermemo18.verb]]
