@@ -88,7 +88,7 @@ A template for a winetricks verb abstracts commonalities between install actions
 
 #+BEGIN_SRC emacs-lisp :results silent
   (require 'cl-lib)
-  (cl-defun print-installer (&key app-name app-title media-type installer-file-name installer-url installer-sha256sum installed-exe)
+  (cl-defun make-wizard-installer (&key app-name app-title media-type installer-file-name installer-url installer-sha256sum installed-exe)
     (setq dlcmd (string-join (if (string= media-type "manual_download")
                                  (list "w_download_manual" installer-url installer-file-name installer-sha256sum)
                                (list "w_download" installer-url installer-sha256sum)) " "))
@@ -98,7 +98,7 @@ A template for a winetricks verb abstracts commonalities between install actions
       publisher=\"SuperMemo World\" \\
       media=\"%s\" \\
       file1=\"%s\" \\
-      installed_exe1=\"c:/SuperMemo/%s\" \\
+      installed_exe1=\"c:/SuperMemo/%s\"
 
   load_%s()
   {
@@ -133,13 +133,14 @@ A template for a winetricks verb abstracts commonalities between install actions
 
 *** SuperMemo 15 installer
 #+BEGIN_SRC emacs-lisp :results value file :file supermemo15.verb
-  (print-installer :app-name "supermemo15"
-                   :app-title "SuperMemo 15"
-                   :media-type "download"
-                   :installer-file-name "sm15inst.exe"
-                   :installer-url "https://supermemo.org/install/sm15inst.exe"
-                   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
-                   :installed-exe "sm15.exe")
+  (make-wizard-installer
+   :app-name "supermemo15"
+   :app-title "SuperMemo 15"
+   :media-type "download"
+   :installer-file-name "sm15inst.exe"
+   :installer-url "https://supermemo.org/install/sm15inst.exe"
+   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
+   :installed-exe "sm15.exe")
 #+END_SRC
 
 #+RESULTS:
@@ -147,13 +148,14 @@ A template for a winetricks verb abstracts commonalities between install actions
 
 *** SuperMemo 16 installer
 #+BEGIN_SRC emacs-lisp :results value file :file supermemo16.verb
-  (print-installer :app-name "supermemo16"
-                   :app-title "SuperMemo 16"
-                   :media-type "download"
-                   :installer-file-name "sm16inst.exe"
-                   :installer-url "https://supermemo.org/install/sm16inst.exe"
-                   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
-                   :installed-exe "sm16.exe")
+  (make-wizard-installer
+   :app-name "supermemo16"
+   :app-title "SuperMemo 16"
+   :media-type "download"
+   :installer-file-name "sm16inst.exe"
+   :installer-url "https://supermemo.org/install/sm16inst.exe"
+   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
+   :installed-exe "sm16.exe")
 #+END_SRC
 
 #+RESULTS:
@@ -161,13 +163,14 @@ A template for a winetricks verb abstracts commonalities between install actions
 
 *** SuperMemo 17 installer
 #+BEGIN_SRC emacs-lisp :results value file :file supermemo17.verb
-  (print-installer :app-name "supermemo17"
-                   :app-title "SuperMemo 17"
-                   :media-type "manual_download"
-                   :installer-file-name "sm17inst.exe"
-                   :installer-url "https://super-memo.com/index.html"
-                   :installer-sha256sum "09269ed14c042099e492283e3d3376931c99e31b94d9e3d8b1ce0334a0386920"
-                   :installed-exe "sm17.exe")
+  (make-wizard-installer
+   :app-name "supermemo17"
+   :app-title "SuperMemo 17"
+   :media-type "manual_download"
+   :installer-file-name "sm17inst.exe"
+   :installer-url "https://super-memo.com/index.html"
+   :installer-sha256sum "09269ed14c042099e492283e3d3376931c99e31b94d9e3d8b1ce0334a0386920"
+   :installed-exe "sm17.exe")
 #+END_SRC
 
 #+RESULTS:
