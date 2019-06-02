@@ -2,7 +2,7 @@
 
 [[https://orgmode.org/worg/org-contrib/babel/][https://img.shields.io/badge/org--babel-literate-informational.svg]]
 
-...offering simple installation of SuperMemo on Linux systems using [[https://www.winehq.org/][Wine]] and [[https://wiki.winehq.org/Winetricks][winetricks]].
+Installing SuperMemo on Linux is finally easier.
 
 [[https://www.reddit.com/r/super_memo/comments/bv28ol/supermemowine_simple_installation_of_supermemo_on/][Reddit thread]].
 
@@ -18,10 +18,10 @@ Even with these apparent setbacks, I deem the behavior of SuperMemo on Wine (on 
 ** Provided installers 
 | Product          | Year released | Last updated         | Type           | Installer        |
 |------------------+---------------+----------------------+----------------+------------------|
-| SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]] |          2011 | Jul 1, 2018 (15.5)   | Freeware [[http://super-memory.com/english/down.htm][(↗)]]   | [[./supermemo15.verb][supermemo15.verb]] |
-| SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]] |          2013 | Apr 5, 2015 (16.1)   | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./supermemo16.verb][supermemo16.verb]] |
-| SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]] |          2017 | Jun 11, 2018 (17.40) | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./supermemo17.verb][supermemo17.verb]] |
-| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]] |          2019 | May 28, 2019 (18.02) | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./supermemo18.verb][supermemo18.verb]] |
+| SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]] |          2011 | Jul 1, 2018 (15.5)   | Freeware [[http://super-memory.com/english/down.htm][(↗)]]   | [[./verbs/supermemo15.verb][supermemo15.verb]] |
+| SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]] |          2013 | Apr 5, 2015 (16.1)   | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./verbs/supermemo16.verb][supermemo16.verb]] |
+| SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]] |          2017 | Jun 11, 2018 (17.40) | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]] |
+| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]] |          2019 | May 28, 2019 (18.02) | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]] |
 
 ** Installing
 First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
@@ -89,112 +89,242 @@ Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
 - advanced users will know which bits of winetricks to use or discard.
 
 ** Sources
-It is safe to skip this section if all you need is run the installers.
+/It is safe to skip this section if all you need is run the installers. Source code is embedded./
 
-*** Template
-A template for a winetricks verb abstracts commonalities between install actions performed by SuperMemo installers. It makes use of official, published URLs. Installers not published are to be downloaded separately (for example, attached to your order from the [[https://super-memo.com/index.html][Super Memory Store]]).
+The following types of installer are supported:
 
+1. Zip installers, whereby a zip file is uncompressed and one its executables run.
+2. Executable installers, which run a graphical install wizard that retrieves and extracts files to the appropriate location.
+
+Actions performed by installers are abstracted into a definition consisting of the following fields:
+
+| =app-name=            | Short name for the application (unique)                                  |
+| =app-title=           | Long name for the application                                            |
+| =media-type=          | One of: "download", "manual_download"                                    |
+| =installer-file-name= | Name of the file to be downloaded                                        |
+| =installer-url=       | URL to the application distributable, or the website to download it from |
+| =installer-sha256sum= | SHA-256 checksum, for integrity verification                             |
+| =installed-exe=       | Name of the local executable that starts the application                 |
+| =require-ie8-p=       | Whether Internet Explorer 8 is required                                  |
+
+*** Utilities
 #+BEGIN_SRC emacs-lisp :results silent
-  (require 'cl-lib)
-  (cl-defun make-wizard-installer (&key app-name app-title media-type installer-file-name installer-url installer-sha256sum installed-exe)
-    (setq dlcmd (string-join (if (string= media-type "manual_download")
-                                 (list "w_download_manual" installer-url installer-file-name installer-sha256sum)
-                               (list "w_download" installer-url installer-sha256sum)) " "))
-    (print (format "# -*- Mode: shell-script; -*-
-  w_metadata %s apps \\
-      title=\"%s\" \\
-      publisher=\"SuperMemo World\" \\
-      media=\"%s\" \\
-      file1=\"%s\" \\
-      installed_exe1=\"c:/SuperMemo/%s\"
+  (defmacro with-plist-bindings (plist keys more-bindings body)
+    "Transform a property list into a block of let* bindings, to be
+  combined with a list of additional bindings."
+    (list 'let*
+          (append (mapcar #'(lambda (k) (list k `(plist-get ,plist (quote ,k)))) keys)
+                  more-bindings)
+          body))
 
-  load_%s()
+  (defun make-installer (script-body definition)
+    (with-plist-bindings definition
+                         (list app-name app-title media-type
+                               installer-file-name installer-url
+                               installer-sha256sum installed-exe
+                               require-ie8-p)
+                         (list
+                          ;; command to download IE8, if applicable
+                          (ie8-cmd (if require-ie8-p "w_call ie8" ""))
+                          ;; command to download the distributable
+                          (dl-cmd
+                           (string-join (if (string= media-type "manual_download")
+                                            (list "w_download_manual" installer-url installer-file-name installer-sha256sum)
+                                          (list "w_download" installer-url installer-sha256sum)) " "))
+                          ;; application icon
+                          (icon (replace-regexp-in-string "\n\\'" ""
+                                                          (shell-command-to-string "base64 ./assets/smglobe-64.png")))
+                          ;; format specification
+                          (fspec (format-spec-make
+                                  ?a app-name
+                                  ?t app-title
+                                  ?m media-type
+                                  ?i installer-file-name
+                                  ?u installer-url
+                                  ?s installer-sha256sum
+                                  ?x installed-exe
+                                  ?n icon
+                                  ?e ie8-cmd
+                                  ?d dl-cmd)))
+                         (print (format-spec script-body fspec))))
+#+END_SRC
+
+*** Common script blocks
+
+/installer-banner ::=/
+
+#+NAME: installer-banner
+#+BEGIN_SRC text
+  Automatically generated by supermemo-wine
+  URL: https://github.com/alessivs/supermemo-wine
+  Modify with care.
+#+END_SRC
+
+/installer-metadata ::=/
+
+#+NAME: installer-metadata
+#+BEGIN_SRC shell-script
+  w_metadata %a apps \\
+      title=\"%t\" \\
+      publisher=\"SuperMemo World\" \\
+      media=\"%m\" \\
+      file1=\"%i\" \\
+      installed_exe1=\"c:/SuperMemo/%x\"
+#+END_SRC
+
+/installer-shortcut ::=/
+
+#+NAME: installer-shortcut
+#+BEGIN_SRC shell-script
+  cat <<EOF | base64 --decode > \"$WINEPREFIX/drive_c/SuperMemo/smicon.png\"
+  %n
+  EOF
+  (
+      if ! test \"$XDG_DESKTOP_DIR\" && test -f \"$XDG_CONFIG_HOME/user-dirs.dirs\"; then
+          . \"$XDG_CONFIG_HOME/user-dirs.dirs\"
+      fi
+      if test \"$XDG_DESKTOP_DIR\"; then
+          _W_shortcut=\"$W_TMP\"/%a.desktop
+          cat > \"$_W_shortcut\" <<EOF
+  [Desktop Entry]
+  Name=%t
+  Exec=env WINEPREFIX=\"$WINEPREFIX\" wine \"$WINEPREFIX/drive_c/SuperMemo/%x\"
+  Type=Application
+  StartupNotify=true
+  Comment=Organize your knowledge and learn at the maximum possible speed
+  Path=$WINEPREFIX/drive_c/SuperMemo
+  Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
+  StartupWMClass=%x
+  EOF
+          chmod +x \"$_W_shortcut\"
+          cp \"$_W_shortcut\" \"$XDG_DESKTOP_DIR\"
+      fi
+  )
+#+END_SRC
+
+*** Zip installer template
+#+BEGIN_SRC emacs-lisp :results silent :noweb yes
+  (defun make-zip-installer (&rest definition)
+    (make-installer
+     "# -*- Mode: shell-script; -*-
+  # <<installer-banner>>
+  <<installer-metadata>>
+
+  load_%a()
   {
       w_package_unsupported_win64
-      w_call ie8
-      %s
+      %e
+      %d
+      w_try_unzip \"$W_DRIVE_C/SuperMemo\" \"$W_CACHE/$W_PACKAGE\"/%i
+  <<installer-shortcut>>
+  }
+  " definition))
+#+END_SRC
+
+*** Wizard installer template
+#+BEGIN_SRC emacs-lisp :results silent :noweb yes
+  (defun make-wizard-installer (&rest definition)
+    (make-installer
+     "# -*- Mode: shell-script; -*-
+  # <<installer-banner>>
+  <<installer-metadata>>
+
+  load_%a()
+  {
+      w_package_unsupported_win64
+      %e
+      %d
       w_try_cd \"$W_CACHE/$W_PACKAGE\"
       w_ahk_do \"
-          run, %s
+          run, %i
           WinWait, SuperMemo Install Wizard, Welcome to the SuperMemo
-          Sleep 100
+          Sleep 800
           ControlClick, Button2
           WinWait, SuperMemo Install Wizard, Choose Install Folder
-          Sleep 100
+          Sleep 800
           ControlClick, Button2
           WinWait, SuperMemo Install Wizard, Choose Start Menu
-          Sleep 100
+          Sleep 800
+          ControlClick, Button4
+          Sleep 800
           ControlClick, Button2
           WinWait, SuperMemo Install Wizard, Choose Additional
-          Sleep 100
+          Sleep 800
+          ControlClick, Button8
+          Sleep 800
           ControlClick, Button2
           WinWait, SuperMemo Install Wizard, Completing the
           ControlClick, Button4
-          Sleep 100
+          Sleep 800
           ControlClick, Button2
-          Sleep 100
+          Sleep 800
           WinWaitClose, SuperMemo Install Wizard
       \"
+  <<installer-shortcut>>
   }
-  " app-name app-title media-type installer-file-name installed-exe app-name dlcmd installer-file-name)))
+  " definition))
 #+END_SRC
 
 *** SuperMemo 15 installer
-#+BEGIN_SRC emacs-lisp :results value file :file supermemo15.verb
+#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo15.verb
   (make-wizard-installer
-   :app-name "supermemo15"
-   :app-title "SuperMemo 15"
-   :media-type "download"
-   :installer-file-name "sm15inst.exe"
-   :installer-url "https://supermemo.org/install/sm15inst.exe"
-   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
-   :installed-exe "sm15.exe")
+   'app-name "supermemo15"
+   'app-title "SuperMemo 15"
+   'media-type "download"
+   'installer-file-name "sm15inst.exe"
+   'installer-url "https://supermemo.org/install/sm15inst.exe"
+   'installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
+   'installed-exe "sm15.exe"
+   'require-ie8-p t)
 #+END_SRC
 
 #+RESULTS:
-[[file:supermemo15.verb]]
+[[file:verbs/supermemo15.verb]]
 
 *** SuperMemo 16 installer
-#+BEGIN_SRC emacs-lisp :results value file :file supermemo16.verb
+#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo16.verb
   (make-wizard-installer
-   :app-name "supermemo16"
-   :app-title "SuperMemo 16"
-   :media-type "download"
-   :installer-file-name "sm16inst.exe"
-   :installer-url "https://supermemo.org/install/sm16inst.exe"
-   :installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
-   :installed-exe "sm16.exe")
+   'app-name "supermemo16"
+   'app-title "SuperMemo 16"
+   'media-type "download"
+   'installer-file-name "sm16inst.exe"
+   'installer-url "https://supermemo.org/install/sm16inst.exe"
+   'installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
+   'installed-exe "sm16.exe"
+   'require-ie8-p t)
 #+END_SRC
 
 #+RESULTS:
-[[file:supermemo16.verb]]
+[[file:verbs/supermemo16.verb]]
 
 *** SuperMemo 17 installer
-#+BEGIN_SRC emacs-lisp :results value file :file supermemo17.verb
+#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo17.verb
   (make-wizard-installer
-   :app-name "supermemo17"
-   :app-title "SuperMemo 17"
-   :media-type "manual_download"
-   :installer-file-name "sm17inst.exe"
-   :installer-url "https://super-memo.com/index.html"
-   :installer-sha256sum "09269ed14c042099e492283e3d3376931c99e31b94d9e3d8b1ce0334a0386920"
-   :installed-exe "sm17.exe")
+   'app-name "supermemo17"
+   'app-title "SuperMemo 17"
+   'media-type "manual_download"
+   'installer-file-name "sm17inst.exe"
+   'installer-url "https://super-memo.com"
+   'installer-sha256sum "09269ed14c042099e492283e3d3376931c99e31b94d9e3d8b1ce0334a0386920"
+   'installed-exe "sm17.exe"
+   'require-ie8-p t)
 #+END_SRC
 
 #+RESULTS:
-[[file:supermemo17.verb]]
+[[file:verbs/supermemo17.verb]]
 
 *** SuperMemo 18 installer
-#+BEGIN_SRC emacs-lisp :results value file :file supermemo18.verb
+#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo18.verb
   (make-wizard-installer
-   :app-name "supermemo18"
-   :app-title "SuperMemo 18"
-   :media-type "manual_download"
-   :installer-file-name "sm18inst.exe"
-   :installer-url "https://super-memo.com/index.html"
-   :installer-sha256sum "87ebd4da706c825575655aeddc9a68291d52712880fe1c39e1e1d0a41853b35f"
-   :installed-exe "sm18.exe")
+   'app-name "supermemo18"
+   'app-title "SuperMemo 18"
+   'media-type "manual_download"
+   'installer-file-name "sm18inst.exe"
+   'installer-url "https://super-memo.com"
+   'installer-sha256sum "87ebd4da706c825575655aeddc9a68291d52712880fe1c39e1e1d0a41853b35f"
+   'installed-exe "sm18.exe"
+   'require-ie8-p t)
 #+END_SRC
 
 #+RESULTS:
-[[file:supermemo18.verb]]
+[[file:verbs/supermemo18.verb]]
