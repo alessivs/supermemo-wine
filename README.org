@@ -16,12 +16,14 @@ Even with these apparent setbacks, I deem the behavior of SuperMemo on Wine (on 
 /Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
 
 ** Provided installers 
-| Product          | Year released | Last updated         | Type           | Installer        |
-|------------------+---------------+----------------------+----------------+------------------|
-| SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]] |          2011 | Jul 1, 2018 (15.5)   | Freeware [[http://super-memory.com/english/down.htm][(↗)]]   | [[./verbs/supermemo15.verb][supermemo15.verb]] |
-| SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]] |          2013 | Apr 5, 2015 (16.1)   | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./verbs/supermemo16.verb][supermemo16.verb]] |
-| SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]] |          2017 | Jun 11, 2018 (17.40) | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]] |
-| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]] |          2019 | May 28, 2019 (18.02) | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]] |
+| Product                      | Year released | Last updated            | Type           | Installer        |
+|------------------------------+---------------+-------------------------+----------------+------------------|
+| SuperMemo 9 (aka. 98) [[http://super-memory.com/archive/help98/index.htm][(?)]]    |          1998 | May 7, 2005 (9.3)       | Freeware [[https://www.supermemo.com/en/archives1990-2015/archive/1998/sm98][(↗)]]   | [[./verbs/supermemo9.verb][supermemo9.verb]]  |
+| SuperMemo 12 (aka. 2004) [[http://super-memory.com/archive/help2004/index.htm][(?)]] |          2004 | Nov 6, 2010 (12.1 Beta) | Freeware [[http://super-memory.com/articles/soft/free.htm][(↗)]]   | [[./verbs/supermemo12.verb][supermemo12.verb]] |
+| SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]]             |          2011 | Jul 1, 2018 (15.5)      | Freeware [[http://super-memory.com/english/down.htm][(↗)]]   | [[./verbs/supermemo15.verb][supermemo15.verb]] |
+| SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]]             |          2013 | Apr 5, 2015 (16.1)      | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./verbs/supermemo16.verb][supermemo16.verb]] |
+| SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]]             |          2017 | Jun 11, 2018 (17.40)    | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]] |
+| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]]             |          2019 | May 28, 2019 (18.02)    | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]] |
 
 ** Installing
 First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
@@ -264,6 +266,38 @@ Actions performed by installers are abstracted into a definition consisting of t
   }
   " definition))
 #+END_SRC
+
+*** SuperMemo 9 (aka. 98) installer
+#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo9.verb
+  (make-zip-installer
+   'app-name "supermemo9"
+   'app-title "SuperMemo 98"
+   'media-type "download"
+   'installer-file-name "sm98.zip"
+   'installer-url "https://supermemo.org/ftp/sm98.zip"
+   'installer-sha256sum "a8064cc9a6f076779617a3228e49a91c48691c0870aa76b91c228ad00d4f7e5d"
+   'installed-exe "sm98.exe"
+   'require-ie8-p nil)
+#+END_SRC
+
+#+RESULTS:
+[[file:verbs/supermemo9.verb]]
+
+*** SuperMemo 12 (aka. 2004) installer
+#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo12.verb
+  (make-zip-installer
+   'app-name "supermemo12"
+   'app-title "SuperMemo 2004"
+   'media-type "download"
+   'installer-file-name "sm2004.zip"
+   'installer-url "https://supermemo.org/ftp/sm2004.zip"
+   'installer-sha256sum "f2819822db0680b99f18cd2380bd2d14f2f62fe3281b7231be6d0a3d28a907a3"
+   'installed-exe "sm2004.exe"
+   'require-ie8-p t)
+#+END_SRC
+
+#+RESULTS:
+[[file:verbs/supermemo12.verb]]
 
 *** SuperMemo 15 installer
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo15.verb
