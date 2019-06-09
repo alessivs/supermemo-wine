@@ -110,7 +110,10 @@ Actions performed by installers are abstracted into a definition consisting of t
 | =require-ie8-p=       | Whether Internet Explorer 8 is required                                  |
 
 *** Utilities
+#+NAME: elisp-utilities
 #+BEGIN_SRC emacs-lisp :results silent
+  (require 'subr-x)
+
   (defmacro with-plist-bindings (plist keys more-bindings body)
     "Transform a property list into a block of let* bindings, to be
   combined with a list of additional bindings."
@@ -205,6 +208,7 @@ Actions performed by installers are abstracted into a definition consisting of t
 #+END_SRC
 
 *** Zip installer template
+#+NAME: zip-installer
 #+BEGIN_SRC emacs-lisp :results silent :noweb yes
   (defun make-zip-installer (&rest definition)
     (make-installer
@@ -224,6 +228,7 @@ Actions performed by installers are abstracted into a definition consisting of t
 #+END_SRC
 
 *** Wizard installer template
+#+NAME: wizard-installer
 #+BEGIN_SRC emacs-lisp :results silent :noweb yes
   (defun make-wizard-installer (&rest definition)
     (make-installer
@@ -268,6 +273,7 @@ Actions performed by installers are abstracted into a definition consisting of t
 #+END_SRC
 
 *** SuperMemo 9 (aka. 98) installer
+#+NAME: installer-sm9
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo9.verb
   (make-zip-installer
    'app-name "supermemo9"
@@ -280,10 +286,11 @@ Actions performed by installers are abstracted into a definition consisting of t
    'require-ie8-p nil)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: installer-sm9
 [[file:verbs/supermemo9.verb]]
 
 *** SuperMemo 12 (aka. 2004) installer
+#+NAME: installer-sm12
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo12.verb
   (make-zip-installer
    'app-name "supermemo12"
@@ -296,10 +303,11 @@ Actions performed by installers are abstracted into a definition consisting of t
    'require-ie8-p t)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: installer-sm12
 [[file:verbs/supermemo12.verb]]
 
 *** SuperMemo 15 installer
+#+NAME: installer-sm15
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo15.verb
   (make-wizard-installer
    'app-name "supermemo15"
@@ -312,10 +320,11 @@ Actions performed by installers are abstracted into a definition consisting of t
    'require-ie8-p t)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: installer-sm15
 [[file:verbs/supermemo15.verb]]
 
 *** SuperMemo 16 installer
+#+NAME: installer-sm16
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo16.verb
   (make-wizard-installer
    'app-name "supermemo16"
@@ -328,10 +337,11 @@ Actions performed by installers are abstracted into a definition consisting of t
    'require-ie8-p t)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: installer-sm16
 [[file:verbs/supermemo16.verb]]
 
 *** SuperMemo 17 installer
+#+NAME: installer-sm17
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo17.verb
   (make-wizard-installer
    'app-name "supermemo17"
@@ -344,10 +354,11 @@ Actions performed by installers are abstracted into a definition consisting of t
    'require-ie8-p t)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: installer-sm17
 [[file:verbs/supermemo17.verb]]
 
 *** SuperMemo 18 installer
+#+NAME: installer-sm18
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo18.verb
   (make-wizard-installer
    'app-name "supermemo18"
@@ -360,5 +371,10 @@ Actions performed by installers are abstracted into a definition consisting of t
    'require-ie8-p t)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: installer-sm18
 [[file:verbs/supermemo18.verb]]
+
+* COMMENT Local vars
+# Local Variables:
+# org-confirm-babel-evaluate: nil
+# End:
