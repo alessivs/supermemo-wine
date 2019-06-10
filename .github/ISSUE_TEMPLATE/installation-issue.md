@@ -1,7 +1,7 @@
------
+---
 name: installation-issue
 about: Prefer this template to report installation problems.
-----
+---
 
 # Platform information
 
