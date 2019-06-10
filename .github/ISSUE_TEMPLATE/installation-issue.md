@@ -5,6 +5,10 @@ about: Prefer this template to report installation problems.
 
 # Platform information
 
+## Name of checkout or release of supermemo-wine used
+
+[enter text here]
+
 ## Output of `uname -rom`
 
 `[enter text here]`
