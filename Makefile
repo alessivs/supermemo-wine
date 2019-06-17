@@ -4,7 +4,7 @@ BEMACS = $(emacs) README.org -q -batch
 all: compile
 
 compile:
-	$(BEMACS) -l targets/compile.el
+	$(BEMACS) -l compile.el
 
 clean:
 	rm -f verbs/*.verb
