@@ -13,7 +13,7 @@ The Wine SuperMemo experience is not as good as the Windows SuperMemo experience
 
 I deem the behavior of SuperMemo on Wine (on Linux specifically) appropriate for daily use.
 
-For further guidance regarding installation, compatibility, configuration, troubleshooting, and more, there is a nifty document being worked on at SuperMemoPedia: [[http://supermemopedia.com/wiki/SuperMemo_for_Windows_under_Wine][SuperMemo for Windows under Wine]].
+For further guidance regarding installation, compatibility, configuration, troubleshooting, and more, there is a nifty document being worked on at SuperMemoPedia: [[https://supermemopedia.com/wiki/SuperMemo_for_Windows_under_Wine][SuperMemo for Windows under Wine]].
 
 /Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
 
