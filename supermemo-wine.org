@@ -158,7 +158,8 @@ combined with a list of additional bindings."
 
 *** Common script blocks
 
-/installer-banner ::=/
+**** Banner
+A top banner is included identifying the project and where to get help.
 
 #+NAME: installer-banner
 #+BEGIN_SRC text
@@ -167,7 +168,8 @@ URL: https://github.com/alessivs/supermemo-wine
 Edit with care.
 #+END_SRC
 
-/installer-metadata ::=/
+**** Installer metadata
+Verbs need metadata in a prescribed format identifying the package name, publisher, type of install, and the name of the executable on disk.
 
 #+NAME: installer-metadata
 #+BEGIN_SRC shell-script
@@ -179,7 +181,8 @@ w_metadata %a apps \\
     installed_exe1=\"c:/SuperMemo/%x\"
 #+END_SRC
 
-/installer-shortcut ::=/
+**** Installer shorcut
+The installer creates a shortcut (desktop entry file) to simplify starting the program. First, the XDG user-specific data directory is tried (so that the program menu entry appears in the /Education/ category). If that folder cannot be found, the XDG Desktop directory is tried instead. It needs the ~base64~ tool to be available to decode the application icon into place.
 
 #+NAME: installer-shortcut
 #+BEGIN_SRC shell-script
@@ -214,6 +217,21 @@ EOF
 )
 #+END_SRC
 
+**** Winetricks preinstall tweaks
+The following verbs and/or packages are loaded previous to the program installation:
+
++ gdiplus_winxp :: Improves performance in presence of images in MSHTML (particularly inline images, background images). (Thanks to user James at SuperMemopedia for the pointer.)
++ tahoma :: Provide a consistent visual with what is expected of Windows XP. This Tahoma font is not part of ~corefonts~ and allows some menu items to be properly rendered in bold.
++ fontsmooth=rgb :: Hints the prefix to adopt RGB font smoothing, with best results on LCD screens. The user can always change it through the registry or the ~winecfg~ tool.
++ winxp :: Ensures identification as Windows XP.
+
+#+NAME: winetricks-preinstall-tweaks
+#+begin_src shell-script
+w_call gdiplus_winxp
+w_call tahoma
+w_call fontsmooth=rgb
+w_call winxp
+#+end_src
 *** Zip installer template
 #+NAME: zip-installer
 #+BEGIN_SRC emacs-lisp :results silent :noweb yes
@@ -227,10 +245,7 @@ load_%a()
 {
     w_package_unsupported_win64
     %e
-    w_call gdiplus_winxp
-    w_call tahoma
-    w_call fontsmooth=rgb
-    w_call winxp
+    «winetricks-preinstall-tweaks»
     %d
     w_try_unzip \"$W_DRIVE_C/SuperMemo\" \"$W_CACHE/$W_PACKAGE\"/%i
 «installer-shortcut»
@@ -251,10 +266,7 @@ load_%a()
 {
     w_package_unsupported_win64
     %e
-    w_call gdiplus_winxp
-    w_call tahoma
-    w_call fontsmooth=rgb
-    w_call winxp
+    «winetricks-preinstall-tweaks»
     %d
     w_try_cd \"$W_CACHE/$W_PACKAGE\"
     w_ahk_do \"
