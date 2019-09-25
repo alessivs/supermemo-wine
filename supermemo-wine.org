@@ -228,6 +228,9 @@ load_%a()
     w_package_unsupported_win64
     %e
     w_call gdiplus_winxp
+    w_call tahoma
+    w_call fontsmooth=rgb
+    w_call winxp
     %d
     w_try_unzip \"$W_DRIVE_C/SuperMemo\" \"$W_CACHE/$W_PACKAGE\"/%i
 <<installer-shortcut>>
@@ -249,6 +252,9 @@ load_%a()
     w_package_unsupported_win64
     %e
     w_call gdiplus_winxp
+    w_call tahoma
+    w_call fontsmooth=rgb
+    w_call winxp
     %d
     w_try_cd \"$W_CACHE/$W_PACKAGE\"
     w_ahk_do \"
