@@ -49,7 +49,7 @@ The installer takes care of running the installation of Internet Explorer 8 for 
 Installation steps in SuperMemos using installation wizards are handled automatically. Avoid moving focus away from the install wizard window during installation.
 
 *** Running SuperMemo
-On successful installation, an executable =.desktop= shortcut to start the application will be created in the Desktop folder, if already configured by your distro.
+On successful installation, an executable =.desktop= shortcut to start the application will be created in the application menu (/Education/ category), or the /Desktop/ folder as a fallback, if any of these is configured.
 
 ** During post-install
 There are many convenient configuration steps to improve the behavior of SuperMemo. They are out of scope for these installers–they're just concerned with the installation. However, consider the following:
@@ -187,24 +187,29 @@ cat <<EOF | base64 --decode > \"$WINEPREFIX/drive_c/SuperMemo/smicon.png\"
 %n
 EOF
 (
-    if ! test \"$XDG_DESKTOP_DIR\" && test -f \"$XDG_CONFIG_HOME/user-dirs.dirs\"; then
-        . \"$XDG_CONFIG_HOME/user-dirs.dirs\"
-    fi
-    if test \"$XDG_DESKTOP_DIR\"; then
-        _W_shortcut=\"$W_TMP\"/%a.desktop
-        cat > \"$_W_shortcut\" <<EOF
+    _W_shortcut=\"$W_TMP\"/%a.desktop
+    cat > \"$_W_shortcut\" <<EOF
 [Desktop Entry]
 Name=%t
 Exec=env WINEPREFIX=\"$WINEPREFIX\" wine \"$WINEPREFIX/drive_c/SuperMemo/%x\"
 Type=Application
+Categories=Education;
 StartupNotify=true
 Comment=Organize your knowledge and learn at the maximum possible speed
 Path=$WINEPREFIX/drive_c/SuperMemo
 Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
 StartupWMClass=%x
 EOF
-        chmod +x \"$_W_shortcut\"
-        cp \"$_W_shortcut\" \"$XDG_DESKTOP_DIR\"
+    chmod +x \"$_W_shortcut\"
+    if test -d \"$XDG_DATA_HOME\" && test -d \"$XDG_DATA_HOME/applications\"; then
+        cp \"$_W_shortcut\" \"$XDG_DATA_HOME/applications\"
+    else
+	if ! test -d \"$XDG_DESKTOP_DIR\" && test -f \"$XDG_CONFIG_HOME/user-dirs.dirs\"; then
+            . \"$XDG_CONFIG_HOME/user-dirs.dirs\"
+	fi
+	if test -d \"$XDG_DESKTOP_DIR\"; then
+            cp \"$_W_shortcut\" \"$XDG_DESKTOP_DIR\"
+	fi
     fi
 )
 #+END_SRC
