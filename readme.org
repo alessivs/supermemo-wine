@@ -1,1 +1,126 @@
-supermemo-wine.org
+#+TITLE: Installers for SuperMemo for Windows using Winetricks
+
+[[https://orgmode.org/worg/org-contrib/babel/][https://img.shields.io/badge/org--babel-literate-informational.svg]]
+
+Installing SuperMemo on Linux is finally +easier+ simpler.
+
+[[https://i.imgur.com/elQIAuX.png]]
+
+[[https://www.reddit.com/r/super_memo/comments/bv28ol/supermemowine_simple_installation_of_supermemo_on/][Reddit thread]].
+
+* Table of contents                                                     :TOC_3:
+- [[#description][Description]]
+  - [[#provided-installers][Provided installers]]
+  - [[#-caveats-galore][👉 Caveats galore]]
+- [[#installing][Installing]]
+  - [[#example][Example]]
+  - [[#installation-wizards][Installation wizards]]
+  - [[#aside-why-add-the-winetricks-dependency][Aside: Why add the winetricks dependency?]]
+- [[#during-post-install][During post-install]]
+  - [[#do-not-use-the-wine-prefix-for-collection-data][Do not use the Wine prefix for collection data]]
+  - [[#how-to-configure-the-wine-prefix][How to configure the Wine prefix]]
+- [[#running-supermemo][Running SuperMemo]]
+- [[#uninstalling][Uninstalling]]
+- [[#source-code][Source code]]
+
+* Description
+This set of installers will allow you to run SuperMemo for Windows under Linux via Wine.
+
+** Provided installers
+| Product                      | Year released | Last updated            | Type           | Installer        |
+|------------------------------+---------------+-------------------------+----------------+------------------|
+| SuperMemo 9 (aka. 98) [[http://super-memory.com/archive/help98/index.htm][(?)]]    |          1998 | May 7, 2005 (9.3)       | Freeware [[https://www.supermemo.com/en/archives1990-2015/archive/1998/sm98][(↗)]]   | [[./verbs/supermemo9.verb][supermemo9.verb]]  |
+| SuperMemo 12 (aka. 2004) [[http://super-memory.com/archive/help2004/index.htm][(?)]] |          2004 | Nov 6, 2010 (12.1 Beta) | Freeware [[http://super-memory.com/articles/soft/free.htm][(↗)]]   | [[./verbs/supermemo12.verb][supermemo12.verb]] |
+| SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]]             |          2011 | Jul 1, 2018 (15.5)      | Freeware [[http://super-memory.com/english/down.htm][(↗)]]   | [[./verbs/supermemo15.verb][supermemo15.verb]] |
+| SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]]             |          2013 | Apr 5, 2015 (16.1)      | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./verbs/supermemo16.verb][supermemo16.verb]] |
+| SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]]             |          2017 | Jun 11, 2018 (17.40)    | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]] |
+| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]]             |          2019 | Jul 3, 2019 (18.03)     | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]] |
+
+** 👉 Caveats galore
+The Wine SuperMemo experience is not as good as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). More importantly:
+
+#+begin_quote
+I deem the behavior of SuperMemo on Wine (on Linux specifically) appropriate for daily use.
+
+    —Me
+#+end_quote
+
+To import HTML content into SuperMemo, prefer web pages rendered by Firefox, then run the any HTML filters within SuperMemo (@@html:<kbd>@@F6@@html:</kbd>@@) as needed.
+
+For further guidance regarding installation, compatibility, configuration, troubleshooting, and more, there is a nifty document being worked on at SuperMemopedia: [[https://supermemopedia.com/wiki/SuperMemo_for_Windows_under_Wine][SuperMemo for Windows under Wine]].
+
+/Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
+
+* Installing
+First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
+
+: $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb
+
+By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=.
+
+*Quirk:* =env WINEARCH=win32= is needed at the front to avoid creation of a 64-bit prefix when an existing, default Wine prefix is already 64-bit. Installation of the required Internet Explorer 8 dependency only succeeds on a 32-bit prefix.
+
+** Example
+To install SuperMemo 15 run:
+
+  : $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15 supermemo15.verb
+
+The root of the wine prefix will then be =~/.local/share/wineprefixes/supermemo15/=.
+
+** Installation wizards
+The installer takes care of running the installation of Internet Explorer 8 for SuperMemos that need it. This installation wizard needs to be attended. Any prompts to /install updates/, or /restart the system/ can be safely ignored or followed (they have no consequence). Actually restarting the system is not needed.
+
+Installation steps in SuperMemos using installation wizards are handled automatically. Avoid moving focus away from the install wizard window during installation.
+
+
+** Aside: Why add the winetricks dependency?
++ winetricks may have produced the only reproducible 32-bit Internet Explorer 8 installation recipe that is kept up to date; it is rather complex and maintaining a separate one requires resources better spent elsewhere.
++ winetricks has convenient shell functions for basic dependency management, checking download integrity, detecting existing installations, graphical installer automation via AutoHotKey, among others.
++ advanced users will know which bits of winetricks to use or discard.
+
+* During post-install
+The installers perform minimal configuration work. There are many convenient configuration steps to improve the behavior of SuperMemo, which are out of scope for these installers. However, consider the following:
+
+** Do not use the Wine prefix for collection data
+Since wine prefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
+
+** How to configure the Wine prefix
+The canonical command to configure the wine prefix the software has been installed into is:
+
+ : $ env WINEPREFIX=/path/to/wine/prefix winecfg
+
+It is useful to disable handling of file associations with crippled Wine applications, so disable:
+
+/Wine configuration → Desktop integration → Mime types → [ ] Manage file associations/.
+* Running SuperMemo
+On successful installation, an executable =.desktop= shortcut (/desktop entry file/) to start the application will be created and made accesible via the configured application menu facility (in the /Education/ category), with the /Desktop/ folder as a fallback. Most desktop systems are configured to start programs by activating a =.desktop= file
+
+SuperMemo can also be run from the command line:
+
+: env WINEPREFIX=/path/to/prefix wine ~/.local/share/wineprexifes/[prefix name]/drive_c/SuperMemo/[executable name].exe
+
+* Uninstalling
+From the WineHQ Wiki ([[https://wiki.winehq.org/Winetricks#How_to_remove_things_installed_by_Winetricks][source]]):
+
+#+BEGIN_QUOTE
+Winetricks does not provide a way to uninstall individual apps or DLLs inside a Wine prefix. This is for several reasons, but mainly because the preferred way to uninstall anything in Wine is to simply install into a fresh Wine prefix.
+#+END_QUOTE
+
+*Be sure to back up any data saved in C:\\SuperMemo\\ you might need*.
+
+To uninstall SuperMemo, simply delete the corresponding Wine prefix via =winetricks annihilate=. For instance, to uninstall SuperMemo 15 from the winetricks-managed prefix named /supermemo15/, run:
+
+: $ sh winetricks prefix=supermemo15 annihilate
+
+From the winetricks command-line help:
+
+#+BEGIN_QUOTE
+annihilate
+
+Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
+#+END_QUOTE
+
+* Source code
+=supermemo-wine= uses literate programming to express and tangle its sources.
+
+[[./supermemo-wine.org][ *To the sources* ]]
