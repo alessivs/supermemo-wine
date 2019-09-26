@@ -1,6 +1,4 @@
-(setq org-confirm-babel-evaluate nil
-      org-babel-noweb-wrap-start "«"
-      org-babel-noweb-wrap-end "»")
+(setq org-confirm-babel-evaluate nil)
 (with-current-buffer (find-file-noselect "supermemo-wine.org")
   (mapc #'(lambda (name) (org-babel-goto-named-src-block name) (org-babel-execute-src-block))
         '("elisp-utilities"

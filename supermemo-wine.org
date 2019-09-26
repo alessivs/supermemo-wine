@@ -238,17 +238,17 @@ w_call winxp
 (defun make-zip-installer (&rest definition)
   (make-installer
    "# -*- Mode: shell-script; -*-
-# «installer-banner»
-«installer-metadata»
+# <<installer-banner>>
+<<installer-metadata>>
 
 load_%a()
 {
     w_package_unsupported_win64
     %e
-    «winetricks-preinstall-tweaks»
+    <<winetricks-preinstall-tweaks>>
     %d
     w_try_unzip \"$W_DRIVE_C/SuperMemo\" \"$W_CACHE/$W_PACKAGE\"/%i
-«installer-shortcut»
+<<installer-shortcut>>
 }
 " definition))
 #+END_SRC
@@ -259,14 +259,14 @@ load_%a()
 (defun make-wizard-installer (&rest definition)
   (make-installer
    "# -*- Mode: shell-script; -*-
-# «installer-banner»
-«installer-metadata»
+# <<installer-banner>>
+<<installer-metadata>>
 
 load_%a()
 {
     w_package_unsupported_win64
     %e
-    «winetricks-preinstall-tweaks»
+    <<winetricks-preinstall-tweaks>>
     %d
     w_try_cd \"$W_CACHE/$W_PACKAGE\"
     w_ahk_do \"
@@ -294,7 +294,7 @@ load_%a()
         Sleep 800
         WinWaitClose, SuperMemo Install Wizard
     \"
-«installer-shortcut»
+<<installer-shortcut>>
 }
 " definition))
 #+END_SRC
@@ -404,6 +404,4 @@ load_%a()
 * COMMENT Local vars
 # Local Variables:
 # org-confirm-babel-evaluate: nil
-# org-babel-noweb-wrap-start: «
-# org-babel-noweb-wrap-end: »
 # End:
