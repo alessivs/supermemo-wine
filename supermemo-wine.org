@@ -1,4 +1,4 @@
-* Wine installers for SuperMemo using winetricks
+#+TITLE: Installers for SuperMemo for Windows using Winetricks
 
 [[https://orgmode.org/worg/org-contrib/babel/][https://img.shields.io/badge/org--babel-literate-informational.svg]]
 
@@ -8,14 +8,8 @@ Installing SuperMemo on Linux is finally +easier+ simpler.
 
 [[https://www.reddit.com/r/super_memo/comments/bv28ol/supermemowine_simple_installation_of_supermemo_on/][Reddit thread]].
 
-** 👉 Be forewarned
-The Wine SuperMemo experience is not as good as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). To import HTML content into SuperMemo, prefer web pages rendered by Firefox, then run the any HTML filters within SuperMemo (@@html:<kbd>@@F6@@html:</kbd>@@) as needed.
-
-I deem the behavior of SuperMemo on Wine (on Linux specifically) appropriate for daily use.
-
-For further guidance regarding installation, compatibility, configuration, troubleshooting, and more, there is a nifty document being worked on at SuperMemoPedia: [[https://supermemopedia.com/wiki/SuperMemo_for_Windows_under_Wine][SuperMemo for Windows under Wine]].
-
-/Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
+* Description
+This set of installers will allow you to run SuperMemo for Windows under Linux via Wine.
 
 ** Provided installers
 | Product                      | Year released | Last updated            | Type           | Installer        |
@@ -27,7 +21,22 @@ For further guidance regarding installation, compatibility, configuration, troub
 | SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]]             |          2017 | Jun 11, 2018 (17.40)    | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]] |
 | SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]]             |          2019 | Jul 3, 2019 (18.03)     | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]] |
 
-** Installing
+** 👉 Caveats galore
+The Wine SuperMemo experience is not as good as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). More importantly:
+
+#+begin_quote
+I deem the behavior of SuperMemo on Wine (on Linux specifically) appropriate for daily use.
+
+    —Me
+#+end_quote
+
+To import HTML content into SuperMemo, prefer web pages rendered by Firefox, then run the any HTML filters within SuperMemo (@@html:<kbd>@@F6@@html:</kbd>@@) as needed.
+
+For further guidance regarding installation, compatibility, configuration, troubleshooting, and more, there is a nifty document being worked on at SuperMemopedia: [[https://supermemopedia.com/wiki/SuperMemo_for_Windows_under_Wine][SuperMemo for Windows under Wine]].
+
+/Do not blame SuperMemo creators for incompatibilities on unsupported systems. Regressions in Wine do happen, from time to time, and may affect your experience./
+
+* Installing
 First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
 
 : $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb
@@ -36,28 +45,31 @@ By default, wine prefixes created by winetricks will be stored in the folder =~/
 
 *Quirk:* =env WINEARCH=win32= is needed at the front to avoid creation of a 64-bit prefix when an existing, default Wine prefix is already 64-bit. Installation of the required Internet Explorer 8 dependency only succeeds on a 32-bit prefix.
 
-*** Example
+** Example
 To install SuperMemo 15 run:
 
   : $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15 supermemo15.verb
 
- The root of the wine prefix will then be =~/.local/share/wineprefixes/supermemo15/=.
+The root of the wine prefix will then be =~/.local/share/wineprefixes/supermemo15/=.
 
-*** Installation wizards
+** Installation wizards
 The installer takes care of running the installation of Internet Explorer 8 for SuperMemos that need it. This installation wizard needs to be attended. Any prompts to /install updates/, or /restart the system/ can be safely ignored or followed (they have no consequence). Actually restarting the system is not needed.
 
 Installation steps in SuperMemos using installation wizards are handled automatically. Avoid moving focus away from the install wizard window during installation.
 
-*** Running SuperMemo
-On successful installation, an executable =.desktop= shortcut to start the application will be created in the application menu (/Education/ category), or the /Desktop/ folder as a fallback, if any of these is configured.
 
-** During post-install
-There are many convenient configuration steps to improve the behavior of SuperMemo. They are out of scope for these installers–they're just concerned with the installation. However, consider the following:
+** Aside: Why add the winetricks dependency?
++ winetricks may have produced the only reproducible 32-bit Internet Explorer 8 installation recipe that is kept up to date; it is rather complex and maintaining a separate one requires resources better spent elsewhere.
++ winetricks has convenient shell functions for basic dependency management, checking download integrity, detecting existing installations, graphical installer automation via AutoHotKey, among others.
++ advanced users will know which bits of winetricks to use or discard.
 
-*** Do not use the Wine prefix for collection data
+* During post-install
+The installers perform minimal configuration work. There are many convenient configuration steps to improve the behavior of SuperMemo, which are out of scope for these installers. However, consider the following:
+
+** Do not use the Wine prefix for collection data
 Since wine prefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
 
-*** How to configure the Wine prefix
+** How to configure the Wiwne prefix
 The canonical command to configure the wine prefix the software has been installed into is:
 
  : $ env WINEPREFIX=/path/to/wine/prefix winecfg
@@ -65,8 +77,14 @@ The canonical command to configure the wine prefix the software has been install
 It is useful to disable handling of file associations with crippled Wine applications, so disable:
 
 /Wine configuration → Desktop integration → Mime types → [ ] Manage file associations/.
+* Running SuperMemo
+On successful installation, an executable =.desktop= shortcut (/desktop entry file/) to start the application will be created and made accesible via the configured application menu facility (in the /Education/ category), with the /Desktop/ folder as a fallback. Most desktop systems are configured to start programs by activating a =.desktop= file
 
-** Uninstalling
+SuperMemo can also be run from the command line:
+
+: env WINEPREFIX=/path/to/prefix wine ~/.local/share/wineprexifes/[prefix name]/drive_c/SuperMemo/[executable name].exe
+
+* Uninstalling
 From the WineHQ Wiki ([[https://wiki.winehq.org/Winetricks#How_to_remove_things_installed_by_Winetricks][source]]):
 
 #+BEGIN_QUOTE
@@ -77,7 +95,7 @@ Winetricks does not provide a way to uninstall individual apps or DLLs inside a 
 
 To uninstall SuperMemo, simply delete the corresponding Wine prefix via =winetricks annihilate=. For instance, to uninstall SuperMemo 15 from the winetricks-managed prefix named /supermemo15/, run:
 
-: $ env WINEARCH=win32 sh winetricks prefix=supermemo15 annihilate
+: $ sh winetricks prefix=supermemo15 annihilate
 
 From the winetricks command-line help:
 
@@ -87,12 +105,7 @@ annihilate
 Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
 #+END_QUOTE
 
-** Why add the winetricks dependency?
-- winetricks may have produced the only reproducible 32-bit Internet Explorer 8 installation recipe that is kept up to date; it is rather complex and maintaining a separate one requires resources better spent elsewhere.
-- winetricks has convenient shell functions for basic dependency management, checking download integrity, detecting existing installations, user interface automation via AutoHotKey, among others.
-- advanced users will know which bits of winetricks to use or discard.
-
-** Sources
+* Sources
 /It is safe to skip this section if all you need is run the installers. Source code is embedded./
 
 The following types of installer are supported:
@@ -111,7 +124,7 @@ Actions performed by installers are abstracted into a definition consisting of t
 | =installed-exe=       | Name of the local executable that starts the application                 |
 | =require-ie8-p=       | Whether Internet Explorer 8 is required                                  |
 
-*** Utilities
+** Utilities
 #+NAME: elisp-utilities
 #+BEGIN_SRC emacs-lisp :results silent
 (require 'subr-x)
@@ -156,19 +169,18 @@ combined with a list of additional bindings."
                        (print (format-spec script-body fspec))))
 #+END_SRC
 
-*** Common script blocks
-
-**** Banner
-A top banner is included identifying the project and where to get help.
+** Common script blocks
+*** Banner
+A top banner is included in the installer source, identifying the project and describing how to get help.
 
 #+NAME: installer-banner
 #+BEGIN_SRC text
-Generated by supermemo-wine
+Created by supermemo-wine
 URL: https://github.com/alessivs/supermemo-wine
 Edit with care.
 #+END_SRC
 
-**** Installer metadata
+*** Installer metadata
 Verbs need metadata in a prescribed format identifying the package name, publisher, type of install, and the name of the executable on disk.
 
 #+NAME: installer-metadata
@@ -181,7 +193,7 @@ w_metadata %a apps \\
     installed_exe1=\"c:/SuperMemo/%x\"
 #+END_SRC
 
-**** Installer shorcut
+*** Installer shorcut
 The installer creates a shortcut (desktop entry file) to simplify starting the program. First, the XDG user-specific data directory is tried (so that the program menu entry appears in the /Education/ category). If that folder cannot be found, the XDG Desktop directory is tried instead. It needs the ~base64~ tool to be available to decode the application icon into place.
 
 #+NAME: installer-shortcut
@@ -217,10 +229,10 @@ EOF
 )
 #+END_SRC
 
-**** Winetricks preinstall tweaks
+*** Winetricks preinstall tweaks
 The following verbs and/or packages are loaded previous to the program installation:
 
-+ gdiplus_winxp :: Improves performance in presence of images in MSHTML (particularly inline images, background images). (Thanks to user James at SuperMemopedia for the pointer.)
++ gdiplus_winxp :: Improves performance (e.g. during scroll) in presence of images in MSHTML (e.g. inline images, and background images). /(Thanks to user James at SuperMemopedia for the pointer)/
 + tahoma :: Provide a consistent visual with what is expected of Windows XP. This Tahoma font is not part of ~corefonts~ and allows some menu items to be properly rendered in bold.
 + fontsmooth=rgb :: Hints the prefix to adopt RGB font smoothing, with best results on LCD screens. The user can always change it through the registry or the ~winecfg~ tool.
 + winxp :: Ensures identification as Windows XP.
@@ -232,7 +244,7 @@ w_call tahoma
 w_call fontsmooth=rgb
 w_call winxp
 #+end_src
-*** Zip installer template
+** Zip installer template
 #+NAME: zip-installer
 #+BEGIN_SRC emacs-lisp :results silent :noweb yes
 (defun make-zip-installer (&rest definition)
@@ -253,7 +265,7 @@ load_%a()
 " definition))
 #+END_SRC
 
-*** Wizard installer template
+** Wizard installer template
 #+NAME: wizard-installer
 #+BEGIN_SRC emacs-lisp :results silent :noweb yes
 (defun make-wizard-installer (&rest definition)
@@ -299,7 +311,7 @@ load_%a()
 " definition))
 #+END_SRC
 
-*** SuperMemo 9 (aka. 98) installer
+** SuperMemo 9 (aka. 98) installer
 #+NAME: installer-sm9
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo9.verb
 (make-zip-installer
@@ -316,7 +328,7 @@ load_%a()
 #+RESULTS: installer-sm9
 [[file:verbs/supermemo9.verb]]
 
-*** SuperMemo 12 (aka. 2004) installer
+** SuperMemo 12 (aka. 2004) installer
 #+NAME: installer-sm12
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo12.verb
 (make-zip-installer
@@ -333,7 +345,7 @@ load_%a()
 #+RESULTS: installer-sm12
 [[file:verbs/supermemo12.verb]]
 
-*** SuperMemo 15 installer
+** SuperMemo 15 installer
 #+NAME: installer-sm15
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo15.verb
 (make-wizard-installer
@@ -350,7 +362,7 @@ load_%a()
 #+RESULTS: installer-sm15
 [[file:verbs/supermemo15.verb]]
 
-*** SuperMemo 16 installer
+** SuperMemo 16 installer
 #+NAME: installer-sm16
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo16.verb
 (make-wizard-installer
@@ -367,7 +379,7 @@ load_%a()
 #+RESULTS: installer-sm16
 [[file:verbs/supermemo16.verb]]
 
-*** SuperMemo 17 installer
+** SuperMemo 17 installer
 #+NAME: installer-sm17
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo17.verb
 (make-wizard-installer
@@ -384,7 +396,7 @@ load_%a()
 #+RESULTS: installer-sm17
 [[file:verbs/supermemo17.verb]]
 
-*** SuperMemo 18 installer
+** SuperMemo 18 installer
 #+NAME: installer-sm18
 #+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo18.verb
 (make-wizard-installer
