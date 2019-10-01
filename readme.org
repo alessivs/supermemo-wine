@@ -97,7 +97,7 @@ On successful installation, an executable =.desktop= shortcut (/desktop entry fi
 
 SuperMemo can also be run from the command line:
 
-: env WINEPREFIX=/path/to/prefix wine ~/.local/share/wineprexifes/[prefix name]/drive_c/SuperMemo/[executable name].exe
+: env WINEPREFIX=~/.local/share/wineprefixes/[prefix name] wine ~/.local/share/wineprefixes/[prefix name]/drive_c/SuperMemo/[executable name].exe
 
 * Uninstalling
 From the WineHQ Wiki ([[https://wiki.winehq.org/Winetricks#How_to_remove_things_installed_by_Winetricks][source]]):
