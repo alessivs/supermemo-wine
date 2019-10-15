@@ -2,6 +2,9 @@
 # Created by supermemo-wine
 # URL: https://github.com/alessivs/supermemo-wine
 # Edit with care.
+# 
+# This Winetricks verb installs SuperMemo 18.
+
 w_metadata supermemo18 apps \
     title="SuperMemo 18" \
     publisher="SuperMemo World" \
@@ -11,39 +14,39 @@ w_metadata supermemo18 apps \
 
 load_supermemo18()
 {
-    w_package_unsupported_win64
-    w_call ie8
-    w_call gdiplus_winxp
-    w_call tahoma
-    w_call fontsmooth=rgb
-    w_call winxp
-    w_download_manual https://super-memo.com sm18inst.exe 87ebd4da706c825575655aeddc9a68291d52712880fe1c39e1e1d0a41853b35f
-    w_try_cd "$W_CACHE/$W_PACKAGE"
-    w_ahk_do "
-        run, sm18inst.exe
-        WinWait, SuperMemo Install Wizard, Welcome to the SuperMemo
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Choose Install Folder
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Choose Start Menu
-        Sleep 800
-        ControlClick, Button4
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Choose Additional
-        Sleep 800
-        ControlClick, Button8
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Completing the
-        ControlClick, Button4
-        Sleep 800
-        ControlClick, Button2
-        Sleep 800
-        WinWaitClose, SuperMemo Install Wizard
-    "
+w_package_unsupported_win64
+w_call ie8
+w_call gdiplus_winxp
+w_call tahoma
+w_call fontsmooth=rgb
+w_call winxp
+w_download_manual https://super-memo.com sm18inst.exe 87ebd4da706c825575655aeddc9a68291d52712880fe1c39e1e1d0a41853b35f
+w_try_cd "$W_CACHE/$W_PACKAGE"
+w_ahk_do "
+    run, sm18inst.exe
+    WinWait, SuperMemo Install Wizard, Welcome to the SuperMemo
+    Sleep 800
+    ControlClick, Button2
+    WinWait, SuperMemo Install Wizard, Choose Install Folder
+    Sleep 800
+    ControlClick, Button2
+    WinWait, SuperMemo Install Wizard, Choose Start Menu
+    Sleep 800
+    ControlClick, Button4
+    Sleep 800
+    ControlClick, Button2
+    WinWait, SuperMemo Install Wizard, Choose Additional
+    Sleep 800
+    ControlClick, Button8
+    Sleep 800
+    ControlClick, Button2
+    WinWait, SuperMemo Install Wizard, Completing the
+    ControlClick, Button4
+    Sleep 800
+    ControlClick, Button2
+    Sleep 800
+    WinWaitClose, SuperMemo Install Wizard
+"
 cat <<EOF | base64 --decode > "$WINEPREFIX/drive_c/SuperMemo/smicon.png"
 iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAd
 CklEQVR4nMWbebClZX3nP8/yvu/Z77lL375b73TTdNMssgbQ4JYgogGjJhpHMzGrYzLJxLFMJTVl
@@ -178,9 +181,8 @@ qZd7leHxqYqorbkoy/tXBuHggqiYTajAl6RACuNwmSEfGNKeSeKeaPRNeQ/B0MO+tXDf/O5dS1mh
 noxeft2RG979S41K5ezs/RP2ij88DfD0rifk3OH9Ybzww8LosKyUV01NGKen0tTUvXEh4JSUPeXt
 bNpcmF1Y7ndkfX2y6fxLBlu27XhFH57+fztmsdxa9JW7AAAAAElFTkSuQmCC
 EOF
-(
-    _W_shortcut="$W_TMP"/supermemo18.desktop
-    cat > "$_W_shortcut" <<EOF
+_W_shortcut="$W_TMP"/supermemo18.desktop
+cat > "$_W_shortcut" <<EOF
 [Desktop Entry]
 Name=SuperMemo 18
 Exec=env WINEPREFIX="$WINEPREFIX" wine "$WINEPREFIX/drive_c/SuperMemo/sm18.exe"
@@ -192,16 +194,15 @@ Path=$WINEPREFIX/drive_c/SuperMemo
 Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
 StartupWMClass=sm18.exe
 EOF
-    chmod +x "$_W_shortcut"
-    if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"; then
-        cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
-    else
-	if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"; then
-            . "$XDG_CONFIG_HOME/user-dirs.dirs"
-	fi
-	if test -d "$XDG_DESKTOP_DIR"; then
-            cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
-	fi
+chmod +x "$_W_shortcut"
+if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"; then
+    cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
+else
+    if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"; then
+	. "$XDG_CONFIG_HOME/user-dirs.dirs"
     fi
-)
+    if test -d "$XDG_DESKTOP_DIR"; then
+	cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
+    fi
+fi
 }

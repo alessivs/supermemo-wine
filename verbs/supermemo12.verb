@@ -2,8 +2,11 @@
 # Created by supermemo-wine
 # URL: https://github.com/alessivs/supermemo-wine
 # Edit with care.
+# 
+# This Winetricks verb installs supermemo 2004.
+
 w_metadata supermemo12 apps \
-    title="SuperMemo 2004" \
+    title="supermemo 2004" \
     publisher="SuperMemo World" \
     media="download" \
     file1="sm2004.zip" \
@@ -11,14 +14,14 @@ w_metadata supermemo12 apps \
 
 load_supermemo12()
 {
-    w_package_unsupported_win64
-    w_call ie8
-    w_call gdiplus_winxp
-    w_call tahoma
-    w_call fontsmooth=rgb
-    w_call winxp
-    w_download https://supermemo.org/ftp/sm2004.zip f2819822db0680b99f18cd2380bd2d14f2f62fe3281b7231be6d0a3d28a907a3
-    w_try_unzip "$W_DRIVE_C/SuperMemo" "$W_CACHE/$W_PACKAGE"/sm2004.zip
+w_package_unsupported_win64
+w_call ie8
+w_call gdiplus_winxp
+w_call tahoma
+w_call fontsmooth=rgb
+w_call winxp
+w_download https://supermemo.org/ftp/sm2004.zip f2819822db0680b99f18cd2380bd2d14f2f62fe3281b7231be6d0a3d28a907a3
+w_try_unzip "$W_DRIVE_C/SuperMemo" "$W_CACHE/$W_PACKAGE"/sm2004.zip
 cat <<EOF | base64 --decode > "$WINEPREFIX/drive_c/SuperMemo/smicon.png"
 iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAd
 CklEQVR4nMWbebClZX3nP8/yvu/Z77lL375b73TTdNMssgbQ4JYgogGjJhpHMzGrYzLJxLFMJTVl
@@ -153,11 +156,10 @@ qZd7leHxqYqorbkoy/tXBuHggqiYTajAl6RACuNwmSEfGNKeSeKeaPRNeQ/B0MO+tXDf/O5dS1mh
 noxeft2RG979S41K5ezs/RP2ij88DfD0rifk3OH9Ybzww8LosKyUV01NGKen0tTUvXEh4JSUPeXt
 bNpcmF1Y7ndkfX2y6fxLBlu27XhFH57+fztmsdxa9JW7AAAAAElFTkSuQmCC
 EOF
-(
-    _W_shortcut="$W_TMP"/supermemo12.desktop
-    cat > "$_W_shortcut" <<EOF
+_W_shortcut="$W_TMP"/supermemo12.desktop
+cat > "$_W_shortcut" <<EOF
 [Desktop Entry]
-Name=SuperMemo 2004
+Name=supermemo 2004
 Exec=env WINEPREFIX="$WINEPREFIX" wine "$WINEPREFIX/drive_c/SuperMemo/sm2004.exe"
 Type=Application
 Categories=Education;
@@ -167,16 +169,15 @@ Path=$WINEPREFIX/drive_c/SuperMemo
 Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
 StartupWMClass=sm2004.exe
 EOF
-    chmod +x "$_W_shortcut"
-    if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"; then
-        cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
-    else
-	if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"; then
-            . "$XDG_CONFIG_HOME/user-dirs.dirs"
-	fi
-	if test -d "$XDG_DESKTOP_DIR"; then
-            cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
-	fi
+chmod +x "$_W_shortcut"
+if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"; then
+    cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
+else
+    if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"; then
+	. "$XDG_CONFIG_HOME/user-dirs.dirs"
     fi
-)
+    if test -d "$XDG_DESKTOP_DIR"; then
+	cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
+    fi
+fi
 }
