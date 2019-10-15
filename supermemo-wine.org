@@ -1,26 +1,26 @@
 #+TITLE: Installers for SuperMemo for Windows using Winetricks: The Sources
 #+OPTIONS: toc:nil
 
-* Contents                                                        :TOC_3_org:
-- [[Definitions and general operation][Definitions and general operation]]
-- [[Installer templates][Installer templates]]
-  - [[Banner][Banner]]
-  - [[Intermediate files used][Intermediate files used]]
-  - [[Template placeholders][Template placeholders]]
-  - [[Zip installer template][Zip installer template]]
-  - [[Wizard installer template][Wizard installer template]]
-  - [[Verb metadata][Verb metadata]]
-  - [[Wine prefix tweaks][Wine prefix tweaks]]
-  - [[Wizard automation][Wizard automation]]
-  - [[Desktop entry file][Desktop entry file]]
-    - [[Creation][Creation]]
--  [[Installer definitions][Installer definitions]]
-  - [[SuperMemo 9 (a.k.a. 98) installer][SuperMemo 9 (a.k.a. 98) installer]]
-  - [[SuperMemo 12 (a.k.a. 2004) installer][SuperMemo 12 (a.k.a. 2004) installer]]
-  - [[SuperMemo 15 installer][SuperMemo 15 installer]]
-  - [[SuperMemo 16 installer][SuperMemo 16 installer]]
-  - [[SuperMemo 17 installer][SuperMemo 17 installer]]
-  - [[SuperMemo 18 installer][SuperMemo 18 installer]]
+* Contents                                                        :TOC_3_gh:
+- [[#definitions-and-general-operation][Definitions and general operation]]
+- [[#installer-templates][Installer templates]]
+  - [[#banner][Banner]]
+  - [[#intermediate-files-used][Intermediate files used]]
+  - [[#template-placeholders][Template placeholders]]
+  - [[#zip-installer-template][Zip installer template]]
+  - [[#wizard-installer-template][Wizard installer template]]
+  - [[#verb-metadata][Verb metadata]]
+  - [[#wine-prefix-tweaks][Wine prefix tweaks]]
+  - [[#wizard-automation][Wizard automation]]
+  - [[#desktop-entry-file][Desktop entry file]]
+    - [[#creation][Creation]]
+-  [[#installer-definitions][Installer definitions]]
+  - [[#supermemo-9-aka-98-installer][SuperMemo 9 (a.k.a. 98) installer]]
+  - [[#supermemo-12-aka-2004-installer][SuperMemo 12 (a.k.a. 2004) installer]]
+  - [[#supermemo-15-installer][SuperMemo 15 installer]]
+  - [[#supermemo-16-installer][SuperMemo 16 installer]]
+  - [[#supermemo-17-installer][SuperMemo 17 installer]]
+  - [[#supermemo-18-installer][SuperMemo 18 installer]]
 
 * Definitions and general operation
 SuperMemo editions supported by this tool come in two kind of bundles:

@@ -8,20 +8,20 @@ Installing SuperMemo on Linux is finally +easier+ simpler.
 
 [[https://www.reddit.com/r/super_memo/comments/bv28ol/supermemowine_simple_installation_of_supermemo_on/][Reddit thread]].
 
-* Table of contents                                                     :TOC_3_org:
-- [[Description][Description]]
-  - [[Provided installers][Provided installers]]
-  - [[👉 Caveats galore][👉 Caveats galore]]
-- [[Installing][Installing]]
-  - [[Example][Example]]
-  - [[Installation wizards][Installation wizards]]
-  - [[Aside: Why add the winetricks dependency?][Aside: Why add the winetricks dependency?]]
-- [[During post-install][During post-install]]
-  - [[Do not use the Wine prefix for collection data][Do not use the Wine prefix for collection data]]
-  - [[How to configure the Wine prefix][How to configure the Wine prefix]]
-- [[Running SuperMemo][Running SuperMemo]]
-- [[Uninstalling][Uninstalling]]
-- [[Source code][Source code]]
+* Table of contents                                                     :TOC_3_gh:
+- [[#description][Description]]
+  - [[#provided-installers][Provided installers]]
+  - [[#-caveats-galore][👉 Caveats galore]]
+- [[#installing][Installing]]
+  - [[#example][Example]]
+  - [[#installation-wizards][Installation wizards]]
+  - [[#aside-why-add-the-winetricks-dependency][Aside: Why add the winetricks dependency?]]
+- [[#during-post-install][During post-install]]
+  - [[#do-not-use-the-wine-prefix-for-collection-data][Do not use the Wine prefix for collection data]]
+  - [[#how-to-configure-the-wine-prefix][How to configure the Wine prefix]]
+- [[#running-supermemo][Running SuperMemo]]
+- [[#uninstalling][Uninstalling]]
+- [[#source-code][Source code]]
 
 * Description
 This set of installers will allow you to run SuperMemo for Windows under Linux via Wine.
