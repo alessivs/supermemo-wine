@@ -1,12 +1,25 @@
-(setq org-confirm-babel-evaluate nil)
-(with-current-buffer (find-file-noselect "supermemo-wine.org")
-  (mapc #'(lambda (name) (org-babel-goto-named-src-block name) (org-babel-execute-src-block))
-        '("elisp-utilities"
-          "zip-installer"
-          "wizard-installer"
-          "installer-sm9"
-          "installer-sm12"
-          "installer-sm15"
-          "installer-sm16"
-          "installer-sm17"
-          "installer-sm18")))
+;; -*- lexical-binding: t; -*-
+
+(require 'org)
+(require 'ob-core)
+
+(defun visit-execute-src-block (&rest names)
+  "Visit and execute source blocks denoted by NAMES."
+  (mapc #'(lambda (block-name)
+	    (org-babel-goto-named-src-block block-name)
+	    (org-babel-execute-src-block))
+	names))
+
+(let ((org-confirm-babel-evaluate nil))
+  (org-babel-do-load-languages 'org-babel-load-languages '((emacs-lisp . t)
+							   (shell . t)))
+  (with-current-buffer (find-file-noselect "supermemo-wine.org")
+    (visit-execute-src-block "installer template paths" "smglobe base64")
+    (org-babel-tangle)
+    (visit-execute-src-block "elisp utilities"
+			     "installer for sm9"
+			     "installer for sm12"
+			     "installer for sm15"
+			     "installer for sm16"
+			     "installer for sm17"
+			     "installer for sm18")))

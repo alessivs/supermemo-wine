@@ -1,123 +1,353 @@
 #+TITLE: Installers for SuperMemo for Windows using Winetricks: The Sources
+#+OPTIONS: toc:nil
 
-* Table of contents                                                :TOC_3_gh:
-- [[#supported-installers][Supported installers]]
-- [[#utilities][Utilities]]
-- [[#common-script-blocks][Common script blocks]]
-  - [[#banner][Banner]]
-  - [[#installer-metadata][Installer metadata]]
-  - [[#installer-shorcut][Installer shorcut]]
-  - [[#winetricks-preinstall-tweaks][Winetricks preinstall tweaks]]
-  - [[#zip-installer-template][Zip installer template]]
-  - [[#wizard-installer-template][Wizard installer template]]
-- [[#installer-creation][Installer creation]]
-  - [[#supermemo-9-aka-98-installer][SuperMemo 9 (aka. 98) installer]]
-  - [[#supermemo-12-aka-2004-installer][SuperMemo 12 (aka. 2004) installer]]
-  - [[#supermemo-15-installer][SuperMemo 15 installer]]
-  - [[#supermemo-16-installer][SuperMemo 16 installer]]
-  - [[#supermemo-17-installer][SuperMemo 17 installer]]
-  - [[#supermemo-18-installer][SuperMemo 18 installer]]
+* Contents                                                        :TOC_3_org:
+- [[Definitions and general operation][Definitions and general operation]]
+- [[Installer templates][Installer templates]]
+  - [[Banner][Banner]]
+  - [[Intermediate files used][Intermediate files used]]
+  - [[Template placeholders][Template placeholders]]
+  - [[Zip installer template][Zip installer template]]
+  - [[Wizard installer template][Wizard installer template]]
+  - [[Verb metadata][Verb metadata]]
+  - [[Wine prefix tweaks][Wine prefix tweaks]]
+  - [[Wizard automation][Wizard automation]]
+  - [[Desktop entry file][Desktop entry file]]
+    - [[Creation][Creation]]
+-  [[Installer definitions][Installer definitions]]
+  - [[SuperMemo 9 (a.k.a. 98) installer][SuperMemo 9 (a.k.a. 98) installer]]
+  - [[SuperMemo 12 (a.k.a. 2004) installer][SuperMemo 12 (a.k.a. 2004) installer]]
+  - [[SuperMemo 15 installer][SuperMemo 15 installer]]
+  - [[SuperMemo 16 installer][SuperMemo 16 installer]]
+  - [[SuperMemo 17 installer][SuperMemo 17 installer]]
+  - [[SuperMemo 18 installer][SuperMemo 18 installer]]
 
-* Supported installers
-The following types of installer are supported:
+* Definitions and general operation
+SuperMemo editions supported by this tool come in two kind of bundles:
 
-1. Zip installers, whereby a zip file is uncompressed and one its executables run.
-2. Executable installers, which run a graphical install wizard that retrieves and extracts files to the appropriate location.
+- Zip file ::  Contains all files needed to run a specific edition of SuperMemo—all that is needed is uncompress these files to an appropriate location.
+- Executable installer :: Running one triggers a guided, graphical installer (wizard) that downloads files needed by the application to the local system.
 
-Actions performed by installers are abstracted into a definition consisting of the following fields:
+Each kind of bundle, separately, shows repeatable behavior that is amenable to automation. In this tool, commonalities are abstracted into an /installer template/, which specifies how to carry on the installation steps. Installers for each supported SuperMemo edition stem from adapting one of these two kinds of template. The end result is a POSIX shell script that can be used by Winetricks–in this form, according to the nomenclature used by the Winetricks project, it is a /Winetricks verb/.
 
-| =app-name=            | Short name for the application (unique)                                  |
-| =app-title=           | Long name for the application                                            |
-| =media-type=          | One of: "download", "manual_download"                                    |
-| =installer-file-name= | Name of the file to be downloaded                                        |
-| =installer-url=       | URL to the application distributable, or the website to download it from |
-| =installer-sha256sum= | SHA-256 checksum, for integrity verification                             |
-| =installed-exe=       | Name of the local executable that starts the application                 |
-| =require-ie8-p=       | Whether Internet Explorer 8 is required                                  |
+The described operation merits the definition of the following:
 
-* Utilities
-#+NAME: elisp-utilities
-#+BEGIN_SRC emacs-lisp :results silent
-(require 'subr-x)
+- Winetricks verb :: A shell script function to be used in conjunction with the =winetricks= script. It may install a package or otherwise perform a specific action inside a Wine prefix.
+- Installer template :: Source for a shell script with percent-encoded text placeholders. It lives only as an intermediate file in a temporary location, and is customized by an /installer definition/ to produce a /Winetricks verb/
+- Installer definition :: A Lisp form that uses one of the two /installer templates/, and carries metadata specific to a given SuperMemo edition. Its evaluation creates the final /Winetricks verb/ for that edition.
 
-(defmacro with-plist-bindings (plist keys more-bindings body)
-  "Transform a property list into a block of let* bindings, to be
-combined with a list of additional bindings."
-  (list 'let*
-        (append (mapcar #'(lambda (k) (list k `(plist-get ,plist (quote ,k)))) keys)
-                more-bindings)
-        body))
-
-(defun make-installer (script-body definition)
-  (with-plist-bindings definition
-                       (list app-name app-title media-type
-                             installer-file-name installer-url
-                             installer-sha256sum installed-exe
-                             require-ie8-p)
-                       (list
-                        ;; command to download IE8, if applicable
-                        (ie8-cmd (if require-ie8-p "w_call ie8" ""))
-                        ;; command to download the distributable
-                        (dl-cmd
-                         (string-join (if (string= media-type "manual_download")
-                                          (list "w_download_manual" installer-url installer-file-name installer-sha256sum)
-                                        (list "w_download" installer-url installer-sha256sum)) " "))
-                        ;; application icon
-                        (icon (replace-regexp-in-string "\n\\'" ""
-                                                        (shell-command-to-string "base64 ./assets/smglobe-64.png")))
-                        ;; format specification
-                        (fspec (format-spec-make
-                                ?a app-name
-                                ?t app-title
-                                ?m media-type
-                                ?i installer-file-name
-                                ?u installer-url
-                                ?s installer-sha256sum
-                                ?x installed-exe
-                                ?n icon
-                                ?e ie8-cmd
-                                ?d dl-cmd)))
-                       (print (format-spec script-body fspec))))
-#+END_SRC
-
-* Common script blocks
+* Installer templates
 ** Banner
-A top banner is included in the installer source, identifying the project and describing how to get help.
+:PROPERTIES:
+:header-args: :noweb-ref banner
+:END:
 
-#+NAME: installer-banner
-#+BEGIN_SRC text
+A top banner serves to identify the project and where to get help.
+
+#+begin_src text
 Created by supermemo-wine
 URL: https://github.com/alessivs/supermemo-wine
 Edit with care.
-#+END_SRC
 
-** Installer metadata
-Verbs need metadata in a prescribed format identifying the package name, publisher, type of install, and the name of the executable on disk.
+This Winetricks verb installs %t.
+#+end_src
 
-#+NAME: installer-metadata
-#+BEGIN_SRC shell-script
-w_metadata %a apps \\
-    title=\"%t\" \\
-    publisher=\"SuperMemo World\" \\
-    media=\"%m\" \\
-    file1=\"%i\" \\
-    installed_exe1=\"c:/SuperMemo/%x\"
-#+END_SRC
+For the meaning of =%t=, a percent-encoded placeholder, see [[*Template placeholders]].
 
-** Installer shorcut
-The installer creates a shortcut (desktop entry file) to simplify starting the program. First, the XDG user-specific data directory is tried (so that the program menu entry appears in the /Education/ category). If that folder cannot be found, the XDG Desktop directory is tried instead. It needs the ~base64~ tool to be available to decode the application icon into place.
+** Intermediate files used
+Templates make themselves available for further processing from the filesystem.
 
-#+NAME: installer-shortcut
-#+BEGIN_SRC shell-script
-cat <<EOF | base64 --decode > \"$WINEPREFIX/drive_c/SuperMemo/smicon.png\"
-%n
-EOF
-(
-    _W_shortcut=\"$W_TMP\"/%a.desktop
-    cat > \"$_W_shortcut\" <<EOF
+#+NAME: installer template paths
+#+begin_src emacs-lisp :results silent
+(defvar zip-installer-template-path (make-temp-file "smwine-zip." nil ".sh")
+  "The location of the tangled template that serves as basis for Zip installer support.")
+
+(defvar wizard-installer-template-path (make-temp-file "smwine-wiz." nil ".sh")
+  "The location of the tangled template that serves as basis for Wizard-type installer support.")
+#+end_src
+
+** Template placeholders
+
+| Encoded as | Role                              | Commentary                                   |
+|------------+-----------------------------------+----------------------------------------------|
+| =%a=       | application name                  | short name; used to name a verb              |
+| =%t=       | application title                 | full name of the application                 |
+| =%m=       | installer media type              | as defined by Winetricks                     |
+| =%i=       | installer file name               |                                              |
+| =%u=       | installer URL                     |                                              |
+| =%s=       | installer sha256 checksum         |                                              |
+| =%e=       | command that installs IE 8        | ommitted in SuperMemos that don't require it |
+| =%d=       | command that downloads the bundle |                                              |
+
+** Zip installer template
+#+begin_src shell-script :tangle (print zip-installer-template-path) :noweb tangle :shebang # -*- Mode: shell-script; -*-
+# <<banner>>
+
+<<verb metadata>>
+
+load_%a()
+{
+w_package_unsupported_win64
+%e
+<<prefix tweaks>>
+%d
+w_try_unzip "$W_DRIVE_C/SuperMemo" "$W_CACHE/$W_PACKAGE"/%i
+<<shortcut creation>>
+}
+#+end_src
+
+** Wizard installer template
+#+begin_src shell-script :tangle (print wizard-installer-template-path) :noweb tangle :shebang # -*- Mode: shell-script; -*-
+# <<banner>>
+
+<<verb metadata>>
+
+load_%a()
+{
+w_package_unsupported_win64
+%e
+<<prefix tweaks>>
+%d
+w_try_cd "$W_CACHE/$W_PACKAGE"
+w_ahk_do "
+    <<wizard automation>>
+"
+<<shortcut creation>>
+}
+#+end_src
+
+** Verb metadata
+:PROPERTIES:
+:header-args: :noweb-ref verb metadata
+:END:
+
+Winetricks verbs need metadata in a prescribed format identifying the package name, publisher, type of install, and the name of the executable on disk.
+
+#+begin_src shell-script
+w_metadata %a apps \
+    title="%t" \
+    publisher="SuperMemo World" \
+    media="%m" \
+    file1="%i" \
+    installed_exe1="c:/SuperMemo/%x"
+#+end_src
+
+** Wine prefix tweaks
+:PROPERTIES:
+:header-args: :noweb-ref prefix tweaks
+:END:
+
+Prior to the actual installation of SuperMemo, the following verbs and packages are added to the Wine prefix:
+
+#+begin_src shell-script
+w_call gdiplus_winxp
+w_call tahoma
+w_call fontsmooth=rgb
+w_call winxp
+#+end_src
+
+- gdiplus_winxp :: Improves performance in presence of images in MSHTML (particularly inline images, background images). (Thanks to user James at SuperMemopedia for the pointer.)
+- tahoma :: Provide a consistent visual with what is expected of Windows XP. This Tahoma font is not part of ~corefonts~ and allows some menu items to be properly rendered in bold.
+- fontsmooth=rgb :: Hints the prefix to adopt RGB font smoothing, with best results on LCD screens. The user can always change it through the registry or the ~winecfg~ tool.
+- winxp :: Ensures identification as Windows XP.
+
+** Wizard automation
+:PROPERTIES:
+:header-args: :noweb-ref wizard automation
+:END:
+
+Automation of the wizard installer involves going through the installation by clicking buttons. Thankfully, SuperMemo installation wizards are structured in the same fashion.
+
+The following sequence instructs the installer not to create a desktop shortcut, for we are creating our own, which is better integrated with Wine.
+
+#+begin_src ahk
+run, %i
+WinWait, SuperMemo Install Wizard, Welcome to the SuperMemo
+Sleep 800
+ControlClick, Button2
+WinWait, SuperMemo Install Wizard, Choose Install Folder
+Sleep 800
+ControlClick, Button2
+WinWait, SuperMemo Install Wizard, Choose Start Menu
+Sleep 800
+ControlClick, Button4
+Sleep 800
+ControlClick, Button2
+WinWait, SuperMemo Install Wizard, Choose Additional
+Sleep 800
+ControlClick, Button8
+Sleep 800
+ControlClick, Button2
+WinWait, SuperMemo Install Wizard, Completing the
+ControlClick, Button4
+Sleep 800
+ControlClick, Button2
+Sleep 800
+WinWaitClose, SuperMemo Install Wizard
+#+end_src
+
+** Desktop entry file
+The installer creates a shortcut (desktop entry file) to simplify starting the program. To aid identification on desktop systems, the official SuperMemo application icon is to be referenced by the desktop entry file. To preserve the standalone property of the installation script, it is embedded as a base64 string, so copying the icon must involve decoding the application icon into place (with the ~base64~ tool, which must be available).
+
+#+name: smglobe base64
+#+begin_src sh :noweb no :results output
+base64 ./assets/smglobe-64.png
+#+end_src
+
+#+RESULTS: smglobe base64
+#+begin_example
+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
+#+end_example
+
+*** Creation
+:PROPERTIES:
+:header-args: :noweb-ref shortcut creation
+:END:
+
+#+begin_src shell-script :noweb strip-export
+cat <<EOF | base64 --decode > "$WINEPREFIX/drive_c/SuperMemo/smicon.png"
+<<smglobe base64()>>EOF
+#+end_src
+
+The desktop entry file specifies the command to run and ensure its entry appears in the /Education/ category of the system's application menu.
+
+#+begin_src shell-script
+_W_shortcut="$W_TMP"/%a.desktop
+cat > "$_W_shortcut" <<EOF
 [Desktop Entry]
 Name=%t
-Exec=env WINEPREFIX=\"$WINEPREFIX\" wine \"$WINEPREFIX/drive_c/SuperMemo/%x\"
+Exec=env WINEPREFIX="$WINEPREFIX" wine "$WINEPREFIX/drive_c/SuperMemo/%x"
 Type=Application
 Categories=Education;
 StartupNotify=true
@@ -126,204 +356,173 @@ Path=$WINEPREFIX/drive_c/SuperMemo
 Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
 StartupWMClass=%x
 EOF
-    chmod +x \"$_W_shortcut\"
-    if test -d \"$XDG_DATA_HOME\" && test -d \"$XDG_DATA_HOME/applications\"; then
-        cp \"$_W_shortcut\" \"$XDG_DATA_HOME/applications\"
-    else
-	if ! test -d \"$XDG_DESKTOP_DIR\" && test -f \"$XDG_CONFIG_HOME/user-dirs.dirs\"; then
-            . \"$XDG_CONFIG_HOME/user-dirs.dirs\"
-	fi
-	if test -d \"$XDG_DESKTOP_DIR\"; then
-            cp \"$_W_shortcut\" \"$XDG_DESKTOP_DIR\"
-	fi
-    fi
-)
-#+END_SRC
-
-** Winetricks preinstall tweaks
-The following verbs and/or packages are loaded previous to the program installation:
-
-+ gdiplus_winxp :: Improves performance (e.g. during scroll) in presence of images in MSHTML (e.g. inline images, and background images). /(Thanks to user James at SuperMemopedia for the pointer)/
-+ tahoma :: Provide a consistent visual with what is expected of Windows XP. This Tahoma font is not part of ~corefonts~ and allows some menu items to be properly rendered in bold.
-+ fontsmooth=rgb :: Hints the prefix to adopt RGB font smoothing, with best results on LCD screens. The user can always change it through the registry or the ~winecfg~ tool.
-+ winxp :: Ensures identification as Windows XP.
-
-#+NAME: winetricks-preinstall-tweaks
-#+begin_src shell-script
-w_call gdiplus_winxp
-w_call tahoma
-w_call fontsmooth=rgb
-w_call winxp
+chmod +x "$_W_shortcut"
 #+end_src
 
-** Zip installer template
-#+NAME: zip-installer
-#+BEGIN_SRC emacs-lisp :results silent :noweb yes
-(defun make-zip-installer (&rest definition)
-  (make-installer
-   "# -*- Mode: shell-script; -*-
-# <<installer-banner>>
-<<installer-metadata>>
+In determining the target directory where the desktop entry file is to be copied, the XDG user-specific data directory is tried first. If that folder cannot be found, the XDG Desktop directory is tried instead.
 
-load_%a()
-{
-    w_package_unsupported_win64
-    %e
-    <<winetricks-preinstall-tweaks>>
-    %d
-    w_try_unzip \"$W_DRIVE_C/SuperMemo\" \"$W_CACHE/$W_PACKAGE\"/%i
-<<installer-shortcut>>
-}
-" definition))
-#+END_SRC
+#+begin_src shell-script
+if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"; then
+    cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
+else
+    if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"; then
+	. "$XDG_CONFIG_HOME/user-dirs.dirs"
+    fi
+    if test -d "$XDG_DESKTOP_DIR"; then
+	cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
+    fi
+fi
+#+end_src
 
-** Wizard installer template
-#+NAME: wizard-installer
-#+BEGIN_SRC emacs-lisp :results silent :noweb yes
-(defun make-wizard-installer (&rest definition)
-  (make-installer
-   "# -*- Mode: shell-script; -*-
-# <<installer-banner>>
-<<installer-metadata>>
+*  Installer definitions
 
-load_%a()
-{
-    w_package_unsupported_win64
-    %e
-    <<winetricks-preinstall-tweaks>>
-    %d
-    w_try_cd \"$W_CACHE/$W_PACKAGE\"
-    w_ahk_do \"
-        run, %i
-        WinWait, SuperMemo Install Wizard, Welcome to the SuperMemo
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Choose Install Folder
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Choose Start Menu
-        Sleep 800
-        ControlClick, Button4
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Choose Additional
-        Sleep 800
-        ControlClick, Button8
-        Sleep 800
-        ControlClick, Button2
-        WinWait, SuperMemo Install Wizard, Completing the
-        ControlClick, Button4
-        Sleep 800
-        ControlClick, Button2
-        Sleep 800
-        WinWaitClose, SuperMemo Install Wizard
-    \"
-<<installer-shortcut>>
-}
-" definition))
-#+END_SRC
+| =app-name=         | Short name for the application (unique)                                  |
+| =app-title=        | Long name for the application                                            |
+| =media-type=       | One of: "download", "manual_download"                                    |
+| =bundle-file-name= | Name of the file to be downloaded                                        |
+| =bundle-url=       | URL to the application distributable, or the website to download it from |
+| =bundle-sha256sum= | SHA-256 checksum, for integrity verification                             |
+| =installed-exe=    | Name of the local executable that starts the application                 |
+| =require-ie8-p=    | Whether Internet Explorer 8 is required                                  |
 
-* Installer creation
-** SuperMemo 9 (aka. 98) installer
-#+NAME: installer-sm9
-#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo9.verb
+#+name: elisp utilities
+#+begin_src emacs-lisp :results silent
+(defun make-installer (template-path &rest definition)
+  "Load a template from TEMPLATE-PATH and a DEFINITION to produce a Winetricks verb."
+  (let* ((app-name (plist-get definition :app-name))
+	 (app-title (plist-get definition :app-title))
+	 (media-type (plist-get definition :media-type))
+	 (bundle-file-name (plist-get definition :bundle-file-name))
+	 (bundle-url (plist-get definition :bundle-url))
+	 (bundle-sha256sum (plist-get definition :bundle-sha256sum))
+	 (installed-exe (plist-get definition :installed-exe))
+	 (require-ie8-p (plist-get definition :require-ie8-p))
+	 (ie8-cmd (if require-ie8-p "w_call ie8" ""))
+	 (dl-cmd (if (string= media-type "manual_download")
+		     (format "w_download_manual %s %s %s"
+			     bundle-url bundle-file-name bundle-sha256sum)
+		   (format "w_download %s %s"
+			   bundle-url bundle-sha256sum)))
+	 (fspec (format-spec-make
+		 ?a app-name
+		 ?t app-title
+		 ?m media-type
+		 ?i bundle-file-name
+		 ?u bundle-url
+		 ?s bundle-sha256sum
+		 ?x installed-exe
+		 ?e ie8-cmd
+		 ?d dl-cmd)))
+    (with-temp-buffer
+      (insert-file-contents-literally template-path)
+      (print (format-spec (buffer-string) fspec)))))
+
+(defalias 'make-zip-installer
+  (apply-partially 'make-installer zip-installer-template-path))
+(defalias 'make-wizard-installer
+  (apply-partially 'make-installer wizard-installer-template-path))
+#+end_src
+
+** SuperMemo 9 (a.k.a. 98) installer
+#+NAME: installer for sm9
+#+begin_src emacs-lisp :results value file :file verbs/supermemo9.verb
 (make-zip-installer
- 'app-name "supermemo9"
- 'app-title "SuperMemo 98"
- 'media-type "download"
- 'installer-file-name "sm98.zip"
- 'installer-url "https://supermemo.org/ftp/sm98.zip"
- 'installer-sha256sum "a8064cc9a6f076779617a3228e49a91c48691c0870aa76b91c228ad00d4f7e5d"
- 'installed-exe "sm98.exe"
- 'require-ie8-p nil)
-#+END_SRC
+ :app-name "supermemo9"
+ :app-title "SuperMemo 98"
+ :media-type "download"
+ :bundle-file-name "sm98.zip"
+ :bundle-url "https://supermemo.org/ftp/sm98.zip"
+ :bundle-sha256sum "a8064cc9a6f076779617a3228e49a91c48691c0870aa76b91c228ad00d4f7e5d"
+ :installed-exe "sm98.exe"
+ :require-ie8-p nil)
+#+end_src
 
-#+RESULTS: installer-sm9
+#+RESULTS: installer for sm9
 [[file:verbs/supermemo9.verb]]
 
-** SuperMemo 12 (aka. 2004) installer
-#+NAME: installer-sm12
-#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo12.verb
+** SuperMemo 12 (a.k.a. 2004) installer
+#+NAME: installer for sm12
+#+begin_src emacs-lisp :results value file :file verbs/supermemo12.verb
 (make-zip-installer
- 'app-name "supermemo12"
- 'app-title "SuperMemo 2004"
- 'media-type "download"
- 'installer-file-name "sm2004.zip"
- 'installer-url "https://supermemo.org/ftp/sm2004.zip"
- 'installer-sha256sum "f2819822db0680b99f18cd2380bd2d14f2f62fe3281b7231be6d0a3d28a907a3"
- 'installed-exe "sm2004.exe"
- 'require-ie8-p t)
-#+END_SRC
+ :app-name "supermemo12"
+ :app-title "supermemo 2004"
+ :media-type "download"
+ :bundle-file-name "sm2004.zip"
+ :bundle-url "https://supermemo.org/ftp/sm2004.zip"
+ :bundle-sha256sum "f2819822db0680b99f18cd2380bd2d14f2f62fe3281b7231be6d0a3d28a907a3"
+ :installed-exe "sm2004.exe"
+ :require-ie8-p t)
+#+end_src
 
-#+RESULTS: installer-sm12
+#+RESULTS: installer for sm12
 [[file:verbs/supermemo12.verb]]
 
 ** SuperMemo 15 installer
-#+NAME: installer-sm15
-#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo15.verb
+#+NAME: installer for sm15
+#+begin_src emacs-lisp :results value file :file verbs/supermemo15.verb
 (make-wizard-installer
- 'app-name "supermemo15"
- 'app-title "SuperMemo 15"
- 'media-type "download"
- 'installer-file-name "sm15inst.exe"
- 'installer-url "https://supermemo.org/install/sm15inst.exe"
- 'installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
- 'installed-exe "sm15.exe"
- 'require-ie8-p t)
-#+END_SRC
+ :app-name "supermemo15"
+ :app-title "SuperMemo 15"
+ :media-type "download"
+ :bundle-file-name "sm15inst.exe"
+ :bundle-url "https://supermemo.org/install/sm15inst.exe"
+ :bundle-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
+ :installed-exe "sm15.exe"
+ :require-ie8-p t)
+#+end_src
 
-#+RESULTS: installer-sm15
+#+RESULTS: installer for sm15
 [[file:verbs/supermemo15.verb]]
 
 ** SuperMemo 16 installer
-#+NAME: installer-sm16
-#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo16.verb
+#+NAME: installer for sm16
+#+begin_src emacs-lisp :results value file :file verbs/supermemo16.verb
 (make-wizard-installer
- 'app-name "supermemo16"
- 'app-title "SuperMemo 16"
- 'media-type "download"
- 'installer-file-name "sm16inst.exe"
- 'installer-url "https://supermemo.org/install/sm16inst.exe"
- 'installer-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
- 'installed-exe "sm16.exe"
- 'require-ie8-p t)
-#+END_SRC
+ :app-name "supermemo16"
+ :app-title "SuperMemo 16"
+ :media-type "download"
+ :bundle-file-name "sm16inst.exe"
+ :bundle-url "https://supermemo.org/install/sm16inst.exe"
+ :bundle-sha256sum "2add9eebc8398847e9a82b711ff88cd04fcba877700dc0f086630701bd98b5c4"
+ :installed-exe "sm16.exe"
+ :require-ie8-p t)
+#+end_src
 
-#+RESULTS: installer-sm16
+#+RESULTS: installer for sm16
 [[file:verbs/supermemo16.verb]]
 
 ** SuperMemo 17 installer
-#+NAME: installer-sm17
-#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo17.verb
+#+NAME: installer for sm17
+#+begin_src emacs-lisp :results value file :file verbs/supermemo17.verb
 (make-wizard-installer
- 'app-name "supermemo17"
- 'app-title "SuperMemo 17"
- 'media-type "manual_download"
- 'installer-file-name "sm17inst.exe"
- 'installer-url "https://super-memo.com"
- 'installer-sha256sum "09269ed14c042099e492283e3d3376931c99e31b94d9e3d8b1ce0334a0386920"
- 'installed-exe "sm17.exe"
- 'require-ie8-p t)
-#+END_SRC
+ :app-name "supermemo17"
+ :app-title "SuperMemo 17"
+ :media-type "manual_download"
+ :bundle-file-name "sm17inst.exe"
+ :bundle-url "https://super-memo.com"
+ :bundle-sha256sum "09269ed14c042099e492283e3d3376931c99e31b94d9e3d8b1ce0334a0386920"
+ :installed-exe "sm17.exe"
+ :require-ie8-p t)
+#+end_src
 
-#+RESULTS: installer-sm17
+#+RESULTS: installer for sm17
 [[file:verbs/supermemo17.verb]]
 
 ** SuperMemo 18 installer
-#+NAME: installer-sm18
-#+BEGIN_SRC emacs-lisp :results value file :file verbs/supermemo18.verb
+#+NAME: installer for sm18
+#+begin_src emacs-lisp :results value file :file verbs/supermemo18.verb
 (make-wizard-installer
- 'app-name "supermemo18"
- 'app-title "SuperMemo 18"
- 'media-type "manual_download"
- 'installer-file-name "sm18inst.exe"
- 'installer-url "https://super-memo.com"
- 'installer-sha256sum "87ebd4da706c825575655aeddc9a68291d52712880fe1c39e1e1d0a41853b35f"
- 'installed-exe "sm18.exe"
- 'require-ie8-p t)
-#+END_SRC
+ :app-name "supermemo18"
+ :app-title "SuperMemo 18"
+ :media-type "manual_download"
+ :bundle-file-name "sm18inst.exe"
+ :bundle-url "https://super-memo.com"
+ :bundle-sha256sum "87ebd4da706c825575655aeddc9a68291d52712880fe1c39e1e1d0a41853b35f"
+ :installed-exe "sm18.exe"
+ :require-ie8-p t)
+#+end_src
 
-#+RESULTS: installer-sm18
+#+RESULTS: installer for sm18
 [[file:verbs/supermemo18.verb]]
 
 * COMMENT Local vars
