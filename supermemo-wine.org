@@ -457,6 +457,23 @@ fi
 #+RESULTS: installer for sm12
 [[file:verbs/supermemo12.verb]]
 
+** SuperMemo 15.4 installer
+#+NAME: installer for sm15.4
+#+begin_src emacs-lisp :results value file :file verbs/supermemo15_4.verb
+(make-zip-installer
+ :app-name "supermemo15_4"
+ :app-title "SuperMemo 15.4"
+ :media-type "download"
+ :bundle-file-name "sm15abc.zip"
+ :bundle-url "https://supermemo.org/install/15/sm15abc.zip"
+ :bundle-sha256sum "f501d7273a879cb4fd640056eb5c40ba427db765cf1d2f69bb0eb88984e511b9"
+ :installed-exe "sm15.exe"
+ :require-ie8-p t)
+#+end_src
+
+#+RESULTS: installer for sm15.4
+[[file:verbs/supermemo15_4.verb]]
+
 ** SuperMemo 15 installer
 #+NAME: installer for sm15
 #+begin_src emacs-lisp :results value file :file verbs/supermemo15.verb

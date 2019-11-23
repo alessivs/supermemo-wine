@@ -19,6 +19,7 @@
     (visit-execute-src-block "elisp utilities"
 			     "installer for sm9"
 			     "installer for sm12"
+			     "installer for sm15.4"
 			     "installer for sm15"
 			     "installer for sm16"
 			     "installer for sm17"

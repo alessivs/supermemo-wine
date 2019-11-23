@@ -27,14 +27,15 @@ Installing SuperMemo on Linux is finally +easier+ simpler.
 This set of installers will allow you to run SuperMemo for Windows under Linux via Wine.
 
 ** Provided installers
-| Product                      | Year released | Last updated            | Type           | Installer        |
-|------------------------------+---------------+-------------------------+----------------+------------------|
-| SuperMemo 9 (aka. 98) [[http://super-memory.com/archive/help98/index.htm][(?)]]    |          1998 | May 7, 2005 (9.3)       | Freeware [[https://www.supermemo.com/en/archives1990-2015/archive/1998/sm98][(↗)]]   | [[./verbs/supermemo9.verb][supermemo9.verb]]  |
-| SuperMemo 12 (aka. 2004) [[http://super-memory.com/archive/help2004/index.htm][(?)]] |          2004 | Nov 6, 2010 (12.1 Beta) | Freeware [[http://super-memory.com/articles/soft/free.htm][(↗)]]   | [[./verbs/supermemo12.verb][supermemo12.verb]] |
-| SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]]             |          2011 | Jul 1, 2018 (15.5)      | Freeware [[http://super-memory.com/english/down.htm][(↗)]]   | [[./verbs/supermemo15.verb][supermemo15.verb]] |
-| SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]]             |          2013 | Apr 5, 2015 (16.1)      | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./verbs/supermemo16.verb][supermemo16.verb]] |
-| SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]]             |          2017 | Jun 11, 2018 (17.40)    | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]] |
-| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]]             |          2019 | Jul 3, 2019 (18.03)     | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]] |
+| Product                      | Year released | Last updated            | Type           | Installer          |
+|------------------------------+---------------+-------------------------+----------------+--------------------|
+| SuperMemo 9 (aka. 98) [[http://super-memory.com/archive/help98/index.htm][(?)]]    |          1998 | May 7, 2005 (9.3)       | Freeware [[https://www.supermemo.com/en/archives1990-2015/archive/1998/sm98][(↗)]]   | [[./verbs/supermemo9.verb][supermemo9.verb]]    |
+| SuperMemo 12 (aka. 2004) [[http://super-memory.com/archive/help2004/index.htm][(?)]] |          2004 | Nov 6, 2010 (12.1 Beta) | Freeware [[http://super-memory.com/articles/soft/free.htm][(↗)]]   | [[./verbs/supermemo12.verb][supermemo12.verb]]   |
+| SuperMemo 15.4 [[http://super-memory.com/archive/help15/index.htm][(?)]]           |          2011 | Feb 23, 2013 (15.4)     | Freeware [[https://supermemopedia.com/wiki/SuperMemo_15_Freeware][(↗)]]   | [[./verbs/supermemo15_4.verb][supermemo15_4.verb]] |
+| SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]]             |          2011 | Jul 1, 2018 (15.5)      | Freeware [[https://supermemopedia.com/wiki/SuperMemo_15_Freeware][(↗)]]   | [[./verbs/supermemo15.verb][supermemo15.verb]]   |
+| SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]]             |          2013 | Apr 5, 2015 (16.1)      | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./verbs/supermemo16.verb][supermemo16.verb]]   |
+| SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]]             |          2017 | Jun 11, 2018 (17.40)    | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]]   |
+| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]]             |          2019 | Jul 3, 2019 (18.03)     | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]]   |
 
 ** 👉 Caveats galore
 The Wine SuperMemo experience is not as good as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). More importantly:
