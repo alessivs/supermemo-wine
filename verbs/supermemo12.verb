@@ -3,10 +3,10 @@
 # URL: https://github.com/alessivs/supermemo-wine
 # Edit with care.
 # 
-# This Winetricks verb installs supermemo 2004.
+# This Winetricks verb installs SuperMemo 2004.
 
 w_metadata supermemo12 apps \
-    title="supermemo 2004" \
+    title="SuperMemo 2004" \
     publisher="SuperMemo World" \
     media="download" \
     file1="sm2004.zip" \
@@ -159,7 +159,7 @@ EOF
 _W_shortcut="$W_TMP"/supermemo12.desktop
 cat > "$_W_shortcut" <<EOF
 [Desktop Entry]
-Name=supermemo 2004
+Name=SuperMemo 2004
 Exec=env WINEPREFIX="$WINEPREFIX" wine "$WINEPREFIX/drive_c/SuperMemo/sm2004.exe"
 Type=Application
 Categories=Education;

@@ -445,7 +445,7 @@ fi
 #+begin_src emacs-lisp :results value file :file verbs/supermemo12.verb
 (make-zip-installer
  :app-name "supermemo12"
- :app-title "supermemo 2004"
+ :app-title "SuperMemo 2004"
  :media-type "download"
  :bundle-file-name "sm2004.zip"
  :bundle-url "https://supermemo.org/ftp/sm2004.zip"
