@@ -55,7 +55,8 @@ For further guidance regarding installation, compatibility, configuration, troub
 * Installing
 First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
 
-: $ env WINEARCH=win32 sh winetricks arch=32 prefix=[choose a prefix name] [file].verb
+: $ env WINEARCH=win32 sh winetricks arch=32 prefix=[prefix name] # create the prefix
+: $ sh winetricks prefix=[prefix name] [file.verb] # install SuperMemo using the corresponding verb
 
 By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=.
 
@@ -64,7 +65,8 @@ By default, wine prefixes created by winetricks will be stored in the folder =~/
 ** Example
 To install SuperMemo 15 run:
 
-  : $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15 supermemo15.verb
+: $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15
+: $ sh winetricks prefix=supermemo15 supermemo15.verb
 
 The root of the wine prefix will then be =~/.local/share/wineprefixes/supermemo15/=.
 
@@ -96,7 +98,7 @@ It is useful to disable handling of file associations with crippled Wine applica
 * Running SuperMemo
 On successful installation, an executable =.desktop= shortcut (/desktop entry file/) to start the application will be created and made accesible via the configured application menu facility (in the /Education/ category), with the /Desktop/ folder as a fallback. Most desktop systems are configured to start programs by activating a =.desktop= file
 
-SuperMemo can also be run from the command line:
+SuperMemo can also be run manually from the command line:
 
 : $ env WINEPREFIX=~/.local/share/wineprefixes/[prefix name] wine ~/.local/share/wineprefixes/[prefix name]/drive_c/SuperMemo/[executable name].exe
 
