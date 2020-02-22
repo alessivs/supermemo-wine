@@ -17,6 +17,10 @@ about: Prefer this template to report installation problems.
 
 `[enter text here]`
 
+## Output of `winetricks --version`
+
+`[enter text here]`
+
 # Problem Description
 
 [enter text here]
