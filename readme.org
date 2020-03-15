@@ -35,7 +35,7 @@ This set of installers will allow you to run SuperMemo for Windows under Linux v
 | SuperMemo 15 [[http://super-memory.com/archive/help15/index.htm][(?)]]             |          2011 | Jul 1, 2018 (15.5)      | Freeware [[https://supermemopedia.com/wiki/SuperMemo_15_Freeware][(↗)]]   | [[./verbs/supermemo15.verb][supermemo15.verb]]   |
 | SuperMemo 16 [[http://super-memory.com/archive/help16/index.htm][(?)]]             |          2013 | Apr 5, 2015 (16.1)      | Trial [[http://super-memory.com/english/down.htm][(↗)]]      | [[./verbs/supermemo16.verb][supermemo16.verb]]   |
 | SuperMemo 17 [[http://super-memory.com/archive/help17/index.htm][(?)]]             |          2017 | Jun 11, 2018 (17.40)    | Commercial [[https://super-memo.com/supermemo17.html][(↗)]] | [[./verbs/supermemo17.verb][supermemo17.verb]]   |
-| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]]             |          2019 | Jul 3, 2019 (18.03)     | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]]   |
+| SuperMemo 18 [[https://help.supermemo.org/wiki/SuperMemo_18_Help][(?)]]             |          2019 | Mar 6, 2020 (18.04)     | Commercial [[https://super-memo.com/supermemo18.html][(↗)]] | [[./verbs/supermemo18.verb][supermemo18.verb]]   |
 
 ** 👉 Caveats galore
 The Wine SuperMemo experience is not as good as the Windows SuperMemo experience. Most core features are supported, save for incremental video, certain audio/video formats, and interaction with a running instance of Internet Explorer (e.g. the mass-import from browser feature is unusable). More importantly:
@@ -55,8 +55,12 @@ For further guidance regarding installation, compatibility, configuration, troub
 * Installing
 First, make sure to get *[[https://wiki.winehq.org/Download][Wine]]* and *[[https://wiki.winehq.org/Winetricks][winetricks]]* for your system. Then, run one of the installers provided as verbs:
 
-: $ env WINEARCH=win32 sh winetricks arch=32 prefix=[prefix name] # create the prefix
-: $ sh winetricks prefix=[prefix name] [file.verb] # install SuperMemo using the corresponding verb
+#+begin_src sh
+# create the prefix
+env WINEARCH=win32 sh winetricks arch=32 prefix=[prefix name]
+# install SuperMemo using the corresponding verb
+sh winetricks prefix=[prefix name] [file.verb]
+#+end_src
 
 By default, wine prefixes created by winetricks will be stored in the folder =~/.local/share/wineprefixes/=.
 
@@ -65,8 +69,10 @@ By default, wine prefixes created by winetricks will be stored in the folder =~/
 ** Example
 To install SuperMemo 15 run:
 
-: $ env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15
-: $ sh winetricks prefix=supermemo15 supermemo15.verb
+#+begin_src sh
+env WINEARCH=win32 sh winetricks arch=32 prefix=supermemo15
+sh winetricks prefix=supermemo15 supermemo15.verb
+#+end_src
 
 The root of the wine prefix will then be =~/.local/share/wineprefixes/supermemo15/=.
 
