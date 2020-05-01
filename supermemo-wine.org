@@ -343,35 +343,40 @@ cat <<EOF | base64 --decode > "$WINEPREFIX/drive_c/SuperMemo/smicon.png"
 The desktop entry file specifies the command to run and ensure its entry appears in the /Education/ category of the system's application menu.
 
 #+begin_src shell-script
-_W_shortcut="$W_TMP"/%a.desktop
-cat > "$_W_shortcut" <<EOF
-[Desktop Entry]
-Name=%t
-Exec=env WINEPREFIX="$WINEPREFIX" wine "$WINEPREFIX/drive_c/SuperMemo/%x"
-Type=Application
-Categories=Education;
-StartupNotify=true
-Comment=Organize your knowledge and learn at the maximum possible speed
-Path=$WINEPREFIX/drive_c/SuperMemo
-Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
-StartupWMClass=%x
-EOF
-chmod +x "$_W_shortcut"
+  _W_prefix_name="${WINEPREFIX##*/}"
+  _W_shortcut="${W_TMP}/%a.${_W_prefix_name}.desktop"
+  cat > "$_W_shortcut" <<EOF
+  [Desktop Entry]
+  Name=%t ($_W_prefix_name)
+  Exec=env WINEPREFIX="$WINEPREFIX" $WINE "$WINEPREFIX/drive_c/SuperMemo/%x"
+  Type=Application
+  Categories=Education;
+  StartupNotify=true
+  Comment=Organize your knowledge and learn at the maximum possible speed
+  Path=$WINEPREFIX/drive_c/SuperMemo
+  Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
+  StartupWMClass=%x
+  EOF
 #+end_src
 
 In determining the target directory where the desktop entry file is to be copied, the XDG user-specific data directory is tried first. If that folder cannot be found, the XDG Desktop directory is tried instead.
 
 #+begin_src shell-script
-if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"; then
-    cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
-else
-    if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"; then
-	. "$XDG_CONFIG_HOME/user-dirs.dirs"
-    fi
-    if test -d "$XDG_DESKTOP_DIR"; then
-	cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
-    fi
-fi
+  if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"
+  then
+      cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
+  else
+      if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"
+      then
+          . "$XDG_CONFIG_HOME/user-dirs.dirs"
+      fi
+      if test -d "$XDG_DESKTOP_DIR"
+      then
+          cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
+      fi
+  fi
+
+  unset _W_prefix_name _W_shortcut
 #+end_src
 
 *  Installer definitions

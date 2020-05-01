@@ -181,11 +181,12 @@ qZd7leHxqYqorbkoy/tXBuHggqiYTajAl6RACuNwmSEfGNKeSeKeaPRNeQ/B0MO+tXDf/O5dS1mh
 noxeft2RG979S41K5ezs/RP2ij88DfD0rifk3OH9Ybzww8LosKyUV01NGKen0tTUvXEh4JSUPeXt
 bNpcmF1Y7ndkfX2y6fxLBlu27XhFH57+fztmsdxa9JW7AAAAAElFTkSuQmCC
 EOF
-_W_shortcut="$W_TMP"/supermemo17.desktop
+_W_prefix_name="${WINEPREFIX##*/}"
+_W_shortcut="${W_TMP}/supermemo17.${_W_prefix_name}.desktop"
 cat > "$_W_shortcut" <<EOF
 [Desktop Entry]
-Name=SuperMemo 17
-Exec=env WINEPREFIX="$WINEPREFIX" wine "$WINEPREFIX/drive_c/SuperMemo/sm17.exe"
+Name=SuperMemo 17 ($_W_prefix_name)
+Exec=env WINEPREFIX="$WINEPREFIX" $WINE "$WINEPREFIX/drive_c/SuperMemo/sm17.exe"
 Type=Application
 Categories=Education;
 StartupNotify=true
@@ -194,15 +195,19 @@ Path=$WINEPREFIX/drive_c/SuperMemo
 Icon=$WINEPREFIX/drive_c/SuperMemo/smicon.png
 StartupWMClass=sm17.exe
 EOF
-chmod +x "$_W_shortcut"
-if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"; then
+if test -d "$XDG_DATA_HOME" && test -d "$XDG_DATA_HOME/applications"
+then
     cp "$_W_shortcut" "$XDG_DATA_HOME/applications"
 else
-    if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"; then
-	. "$XDG_CONFIG_HOME/user-dirs.dirs"
+    if ! test -d "$XDG_DESKTOP_DIR" && test -f "$XDG_CONFIG_HOME/user-dirs.dirs"
+    then
+        . "$XDG_CONFIG_HOME/user-dirs.dirs"
     fi
-    if test -d "$XDG_DESKTOP_DIR"; then
-	cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
+    if test -d "$XDG_DESKTOP_DIR"
+    then
+        cp "$_W_shortcut" "$XDG_DESKTOP_DIR"
     fi
 fi
+
+unset _W_prefix_name _W_shortcut
 }

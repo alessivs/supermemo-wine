@@ -6,9 +6,9 @@ Installing SuperMemo on Linux is finally +easier+ simpler.
 
 [[https://i.imgur.com/elQIAuX.png]]
 
-[[https://www.reddit.com/r/super_memo/comments/bv28ol/supermemowine_simple_installation_of_supermemo_on/][Reddit thread]].
+[[https://www.reddit.com/r/super_memo/comments/bv28ol/supermemowine_simple_installation_of_supermemo_on/][Reddit thread]] | [[./changelog.org][Changelog]]
 
-* Table of contents                                                     :TOC_3_gh:
+* Table of contents                                                :TOC_3_gh:
 - [[#description][Description]]
   - [[#provided-installers][Provided installers]]
   - [[#-caveats-galore][👉 Caveats galore]]
@@ -21,6 +21,7 @@ Installing SuperMemo on Linux is finally +easier+ simpler.
   - [[#how-to-configure-the-wine-prefix][How to configure the Wine prefix]]
 - [[#running-supermemo][Running SuperMemo]]
 - [[#uninstalling][Uninstalling]]
+- [[#changes][Changes]]
 - [[#source-code][Source code]]
 
 * Description
@@ -90,6 +91,7 @@ Installation steps in SuperMemos using installation wizards are handled automati
 * During post-install
 The installers perform minimal configuration work. There are many convenient configuration steps to improve the behavior of SuperMemo, which are out of scope for these installers. However, consider the following:
 
+
 ** Do not use the Wine prefix for collection data
 Since wine prefixes can be removed with simple commands, it is recommended that you /do not store new collection data inside the wine prefix/. Do it in a dedicated folder that survives it, such as =~/sm/collections/=.
 
@@ -129,6 +131,8 @@ annihilate
 Delete ALL DATA AND APPLICATIONS INSIDE THIS WINEPREFIX
 #+end_quote
 
+* Changes
+See: [[./changelog.org][Сhangelog]].
 * Source code
 =supermemo-wine= uses literate programming to express and tangle its sources.
 

@@ -1,0 +1,23 @@
+#+TITLE: supermemo-wine Changelog
+
+* 2020.05.01
+
+** Added
++ Support multiple installations of the same product (prefix locations need to be unique, which is a condition already enforced by Wine).
++ Ability to take a custom location for the =wine= executable (through the =WINE= environment variable). The choice of =wine= binary is respected as long as SuperMemo is started from the created =.desktop= file.
++ Issue submission template (GitHub).
++ Wiki (GitHub)
+
+** Changed
++ Account for an upgrade to SuperMemo 18 (18.04) in the documentation.
++ Suggest two commands instead of one–for prefix creation and installation, respectively–to work around a known Winetricks bug wtih unreleased fix.
+
+* 2019.11.23
+
+** Added
++ SuperMemo 15.4 installation recipe was added (=supermemo15_4.verb=). SuperMemo 15.4 was released to counter  problematic behavior under Windows 10 ([[https://supermemopedia.com/wiki/SuperMemo_15_Freeware][described here]]). SuperMemo under Wine should not be affected either by changes in 15.5 or 15.4, but some of the modifications may potentially introduce negative interactions. (None found as of yet; the choice is yours).
+
+** Changed
++ Minor corrections to documentation.
+
+** Removed
