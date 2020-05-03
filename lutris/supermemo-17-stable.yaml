@@ -5,7 +5,7 @@
 name: SuperMemo 17
 game_slug: supermemo-17
 version: Stable
-slug: supermemo17-stable
+slug: supermemo-17-stable
 runner: wine
 year: 2017
 

@@ -5,7 +5,7 @@
 name: SuperMemo 18
 game_slug: supermemo-18
 version: Stable
-slug: supermemo18-stable
+slug: supermemo-18-stable
 runner: wine
 year: 2019
 
