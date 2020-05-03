@@ -3,9 +3,9 @@
 # Edit with care.
 
 name: SuperMemo 18
-game_slug: supermemo18
-version: Installer-20200502
-slug: supermemo18-installer
+game_slug: supermemo-18
+version: Stable
+slug: supermemo18-stable
 runner: wine
 year: 2019
 
