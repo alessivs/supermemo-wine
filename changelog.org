@@ -1,5 +1,9 @@
 #+TITLE: supermemo-wine Changelog
 
+* [Unreleased]
+** Added
++ [EXPERIMENTAL] Wine "stable" installers for Lutris based on Wine 4.x.
+
 * 2020.05.01
 
 ** Added
@@ -13,11 +17,9 @@
 + Suggest two commands instead of one–for prefix creation and installation, respectively–to work around a known Winetricks bug wtih unreleased fix.
 
 * 2019.11.23
-
 ** Added
 + SuperMemo 15.4 installation recipe was added (=supermemo15_4.verb=). SuperMemo 15.4 was released to counter  problematic behavior under Windows 10 ([[https://supermemopedia.com/wiki/SuperMemo_15_Freeware][described here]]). SuperMemo under Wine should not be affected either by changes in 15.5 or 15.4, but some of the modifications may potentially introduce negative interactions. (None found as of yet; the choice is yours).
 
 ** Changed
 + Minor corrections to documentation.
 
-** Removed

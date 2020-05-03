@@ -1,0 +1,38 @@
+# Created by supermemo-wine-next
+# URL: https://github.com/alessivs/supermemo-wine
+# Edit with care.
+
+name: SuperMemo 18
+game_slug: supermemo18
+version: Installer-20200502
+slug: supermemo18-installer
+runner: wine
+year: 2019
+
+script:
+  game:
+    arch: win32
+    exe: $GAMEDIR/prefix/drive_c/SuperMemo/sm18.exe
+    prefix: $GAMEDIR/prefix
+    working_dir: $GAMEDIR/prefix/drive_c/SuperMemo  
+  files:
+  - setup: "N/A:Please select The SuperMemo 18 installer downloaded from Super Memory Store (sm18inst.exe)"
+  installer:
+  - task:
+      arch: win32
+      name: winetricks
+      app: ie8 gdiplus_winxp fontsmooth=rgb tahoma winxp
+      description: Downloading and installing system requirements. Be patient.
+  - task:
+      arch: win32
+      args: /S
+      description: Downloading and installing SuperMemo 18. The process may take a while.
+      executable: setup
+      name: wineexec
+      prefix: $GAMEDIR/prefix
+  wine:
+    version: lutris-4.21-x86_64
+    dxvk: false
+  system:
+    env:
+      PULSE_LATENCY_MSEC: 60
