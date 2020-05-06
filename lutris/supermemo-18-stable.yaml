@@ -33,6 +33,3 @@ script:
   wine:
     version: lutris-4.21-x86_64
     dxvk: false
-  system:
-    env:
-      PULSE_LATENCY_MSEC: 60
