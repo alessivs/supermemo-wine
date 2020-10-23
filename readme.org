@@ -2,6 +2,14 @@
 
 [[https://orgmode.org/worg/org-contrib/babel/][https://img.shields.io/badge/org--babel-literate-informational.svg]]
 
+-----
+
+** IMPORTANT NOTE
+
+The state of this repository is temporarily misaligned with the latest state of development. It is currently not the source of truth. This situation will be amended in due time. Thanks for your patience. Long live SuperMemo.
+
+-----
+
 Installing SuperMemo on Linux is finally +easier+ simpler.
 
 [[https://i.imgur.com/elQIAuX.png]]
